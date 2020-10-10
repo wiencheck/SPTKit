@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
+        "state": {
+          "branch": null,
+          "revision": "becd9a729a37bdbef5bc39dc3c702b99f9e3d046",
+          "version": "5.2.2"
+        }
+      },
+      {
+        "package": "SPTKitModels",
+        "repositoryURL": "https://github.com/wiencheck/SPTKitModels.git",
+        "state": {
+          "branch": null,
+          "revision": "ff36798e30cf5f3c746095986417f905d4c73a0b",
+          "version": "0.0.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

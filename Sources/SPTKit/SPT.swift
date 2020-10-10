@@ -1,11 +1,21 @@
 
-import Alamofire
 import Foundation
+import Alamofire
+import SPTKitModels
 
 public class SPT {
+    /**
+     A valid access token from the Spotify Accounts service. This library does not take the responsibility of authentication. You have to implement it by yourself. [Read more](https://developer.spotify.com/documentation/general/guides/authorization-guide/)
+     */
     public static var authorizationToken: String?
     
-    public static var countryCode: String?
+    /**
+     An ISO 3166-1 alpha-2 country code.
+     Supply this parameter to limit the response to one particular geographical market. For example, for albums available in Sweden: country=SE.
+     If not given, results will be returned for all countries and you are likely to get duplicate results per album, one for each country in which the album is available!
+     Default value is current `Locale`'s region code.
+     */
+    public static var countryCode: String? = Locale.current.regionCode
     
     // MARK: Internal stuff
     class func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
@@ -28,26 +38,30 @@ public class SPT {
                 completion(.failure(SPTError.noDataReceivedError))
                 return
             }
-            if let error = try? SPTJSONDecoder().decode(SPTErrorResponse.self, from: data) {
-                completion(.failure(error.error))
-            }
-            print(String(data: data, encoding: .utf8))
-            do {
-                let object = try SPTJSONDecoder().decode(T.self, from: data)
-                completion(.success(object))
-            } catch let DecodingError.dataCorrupted(context) {
-                print(context)
-            } catch let DecodingError.keyNotFound(key, context) {
-                print("Key '\(key)' not found:", context.debugDescription)
-                print("codingPath:", context.codingPath)
-            } catch let DecodingError.valueNotFound(value, context) {
-                print("Value '\(value)' not found:", context.debugDescription)
-                print("codingPath:", context.codingPath)
-            } catch let DecodingError.typeMismatch(type, context)  {
-                print("Type '\(type)' mismatch:", context.debugDescription)
-                print("codingPath:", context.codingPath)
-            } catch {
-                print("error: ", error)
+            if let error = try? SPTJSONDecoder().decode(SPTError.self, from: data) {
+                completion(.failure(error))
+            } else {
+                do {
+                    let object = try SPTJSONDecoder().decode(T.self, from: data)
+                    completion(.success(object))
+                } catch let DecodingError.dataCorrupted(context) {
+                    print(context)
+                    completion(.failure(context.underlyingError ?? SPTError.decodingError))
+                } catch let DecodingError.keyNotFound(key, context) {
+                    print("Key '\(key)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                    completion(.failure(context.underlyingError ?? SPTError.decodingError))
+                } catch let DecodingError.valueNotFound(value, context) {
+                    print("Value '\(value)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                    completion(.failure(context.underlyingError ?? SPTError.decodingError))
+                } catch let DecodingError.typeMismatch(type, context)  {
+                    print("Type '\(type)' mismatch:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                    completion(.failure(context.underlyingError ?? SPTError.decodingError))
+                } catch {
+                    print("error: ", error)
+                }
             }
         }
     }
@@ -64,16 +78,6 @@ public class SPT {
                 return nil
         }
         return request
-    }
-    
-    private class func normalizeJson(_ json: String) -> Data? {
-        guard let first = json.firstIndex(of: "["), let last = json.lastIndex(of: "]") else {
-            print(json)
-            return json.data(using: .utf8)
-        }
-        let new = String(json[first...last])
-        print(new)
-        return json.data(using: .utf8)
     }
     
     private init() {}

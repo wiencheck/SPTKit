@@ -5,6 +5,7 @@
 //  Created by Adam Wienconek on 20/09/2020.
 //
 
+import Foundation
 import SPTKitModels
 
 public extension SPT {
@@ -22,6 +23,10 @@ public extension SPT {
         
         private enum Method: SPTMethod {
             case getPlaylist
+            
+            static var path: String {
+                return "playlists"
+            }
         }
     }
 }
