@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 protocol SPTMethod {
-    static var path: String { get }
+    var path: String { get }
     var subpath: String? { get }
     var method: HTTPMethod { get }
 }
@@ -37,7 +37,7 @@ extension SPTMethod {
         var components = URLComponents()
         components.scheme = "https"
         components.host = Self.root
-        components.path = Self.rootExtension + Self.path
+        components.path = Self.rootExtension + path
         if let pathParam = pathParam {
             components.path += "/" + pathParam
         }

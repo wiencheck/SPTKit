@@ -43,24 +43,22 @@ extension SPT {
         /**
          Get Spotify Catalog information about albums, artists, playlists, tracks, shows or episodes that match a keyword string.
          */
-        public class func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = 20, offset: Int = 0, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
+        public class func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
             
             var queryParams = [
                 "q": query,
                 "limit": String(limit),
-                "offset": String(offset)
+                "offset": String(offset),
+                "type": types.map {
+                    $0.rawValue
+                }.joined(separator: ",")
             ]
-            if let country = SPT.countryCode {
-                queryParams["market"] = country
-            }
-            queryParams["type"] = types.map {
-                $0.rawValue
-            }.joined(separator: ",")
+            queryParams.updateValue(market, forKey: "market")
             
-            SPT.call(method: Method.search, pathParam: nil, queryParams: queryParams, completion: completion)
+            SPT.call(method: Method.search, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
-        public class func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = 20, offset: Int = 0, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
+        public class func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
             
             /*
              Field filters: By default, results are returned when a match is found in any field of the target object type. Searches can be made more specific by specifying an album, artist or track field filter. For example: The query q=album:gold%20artist:abba&type=album returns only albums with the text “gold” in the album name and the text “abba” in the artist name.
@@ -89,7 +87,7 @@ extension SPT {
         private enum Method: SPTMethod {
             case search
             
-            static var path: String {
+            var path: String {
                 return "search"
             }
         }

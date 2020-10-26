@@ -10,20 +10,20 @@ import Alamofire
 import SPTKitModels
 
 extension SPTPagingObject {
-    public func getPrevious(completion: @escaping (Result<SPTPagingObject<T>?, Error>) -> Void) {
+    public func getPrevious(completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
         getPage(url: previous, completion: completion)
     }
     
-    public func getNext(completion: @escaping (Result<SPTPagingObject<T>?, Error>) -> Void) {
+    public func getNext(completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
         getPage(url: next, completion: completion)
     }
     
-    private func getPage(url: URL?, completion: @escaping (Result<SPTPagingObject<T>?, Error>) -> Void) {
+    private func getPage(url: URL?, completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
         
         guard let url = url,
             let request = Self.forgeRequest(url: url, method: .get) else {
-            completion(.success(nil))
-            return
+                completion(.failure(SPTError.badRequest))
+                return
         }
         AF.request(request).responseData { response in
             if let error = response.error {

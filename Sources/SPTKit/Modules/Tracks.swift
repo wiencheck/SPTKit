@@ -14,27 +14,24 @@ extension SPT {
         /**
          Get Spotify catalog information for a single track identified by its unique Spotify ID.
          */
-        public class func getTrack(id: String, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
+        public class func getTrack(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTTrack, Error>) -> Void) {
             
             var queryParams = [String: String]()
-            if let country = SPT.countryCode {
-                queryParams["market"] = country
-            }
+            queryParams.updateValue(market, forKey: "market")
             
-            SPT.call(method: Method.severalTracks, pathParam: id, queryParams: queryParams, completion: completion)
+            SPT.call(method: Method.severalTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         /**
          Get Spotify catalog information for multiple tracks based on their Spotify IDs.
          */
-        public class func getSeveralTracks(ids: [String], completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
+        public class func getSeveralTracks(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
             
-            var queryParams = [String: String]()
-            if let country = SPT.countryCode {
-                queryParams["market"] = country
-            }
-            queryParams["ids"] = ids.joined(separator: ",")
+            var queryParams = [
+                "ids": ids.joined(separator: ",")
+            ]
+            queryParams.updateValue(market, forKey: "market")
             
-            SPT.call(method: Method.severalTracks, pathParam: nil, queryParams: queryParams) { (result: Result<Nested<SPTTrack>, Error>) in
+            SPT.call(method: Method.severalTracks, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTTrack>, Error>) in
                 switch result {
                 case .success(let root):
                     completion(.success(root.items))
@@ -46,17 +43,10 @@ extension SPT {
         
         private init() {}
         private enum Method: SPTMethod {
-            case track
-            case severalTracks
+            case track, severalTracks
             
-            static var path: String {
+            var path: String {
                 return "tracks"
-            }
-            
-            var subpath: String? {
-                switch self {
-                default: return nil
-                }
             }
         }
     }

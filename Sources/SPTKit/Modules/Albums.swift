@@ -9,41 +9,49 @@ import Foundation
 import SPTKitModels
 
 public extension SPT {
+    /**
+     Endpoints for retrieving information about one or more albums from the Spotify catalog.
+     */
     class Albums {
-        public class func getAlbum(id: String, completion: @escaping (Result<SPTAlbum, Error>) -> Void) {
+        /**
+         Get Spotify catalog information for a single album.
+         [Read more](https://developer.spotify.com/documentation/web-api/reference/albums/get-album/)
+         
+         - Parameters:
+         - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
+         - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+         - completion: Handler containing decoded objects, called after completing the request.
+         */
+        public class func getAlbum(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTAlbum, Error>) -> Void) {
 
             var queryParams = [String: String]()
-            if let country = SPT.countryCode {
-                queryParams["market"] = country
-            }
-            SPT.call(method: Method.album, pathParam: id, queryParams: queryParams, completion: completion)
+            queryParams.updateValue(market, forKey: "market")
+            
+            SPT.call(method: Method.album, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
          Get Spotify catalog information about an album’s tracks. Optional parameters can be used to limit the number of tracks returned.
          */
-        public class func getAlbumTracks(id: String, limit: Int = 20, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedTrack>, Error>) -> Void) {
+        public class func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedTrack>, Error>) -> Void) {
 
             var queryParams = [
                 "limit": String(limit),
                 "offset": String(offset)
             ]
-            if let country = SPT.countryCode {
-                queryParams["market"] = country
-            }
+            queryParams.updateValue(market, forKey: "market")
             
-            SPT.call(method: Method.albumTracks, pathParam: id, queryParams: queryParams, completion: completion)
+            SPT.call(method: Method.albumTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
-        public class func getSeveralAlbums(ids: [String], completion: @escaping (Result<[SPTAlbum], Error>) -> Void) {
+        public class func getSeveralAlbums(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTAlbum], Error>) -> Void) {
 
-            var queryParams = [String: String]()
-            if let country = SPT.countryCode {
-                queryParams["market"] = country
-            }
-            queryParams["ids"] = ids.joined(separator: ",")
+            var queryParams = [
+                "ids": ids.joined(separator: ",")
+            ]
+            queryParams.updateValue(market, forKey: "market")
             
-            SPT.call(method: Method.severalAlbums, pathParam: nil, queryParams: queryParams) { (result: Result<Nested<SPTAlbum>, Error>) in
+            SPT.call(method: Method.severalAlbums, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTAlbum>, Error>) in
                 switch result {
                 case .success(let root):
                     completion(.success(root.items))
@@ -57,7 +65,7 @@ public extension SPT {
         private enum Method: SPTMethod {
             case album, albumTracks, severalAlbums
             
-            static var path: String {
+            var path: String {
                 return "albums"
             }
             

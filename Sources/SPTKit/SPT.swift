@@ -9,6 +9,8 @@ public class SPT {
      */
     public static var authorizationToken: String?
     
+    public static var limit: Int = 20
+    
     /**
      An ISO 3166-1 alpha-2 country code.
      Supply this parameter to limit the response to one particular geographical market. For example, for albums available in Sweden: country=SE.
@@ -17,11 +19,24 @@ public class SPT {
      */
     public static var countryCode: String? = Locale.current.regionCode
     
-    // MARK: Internal stuff
-    class func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    private init() {}
+}
+
+// MARK: Internal methods
+extension SPT {
+    class func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
-        guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams) else {
+        guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion(.failure(SPTError.badRequest))
+            return
+        }
+        perform(request: request, completion: completion)
+    }
+    
+    class func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
+        
+        guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
+            completion?(SPTError.badRequest)
             return
         }
         perform(request: request, completion: completion)
@@ -30,11 +45,12 @@ public class SPT {
     // MARK: Private stuff
     private class func perform<T>(request: URLRequestConvertible, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
 
-        AF.request(request).responseData { response in
+        AF.request(request).response { response in
             if let error = response.error {
                 completion(.failure(error))
+                return
             }
-            guard let data = response.value else {
+            guard let data = response.data else {
                 completion(.failure(SPTError.noDataReceivedError))
                 return
             }
@@ -66,19 +82,38 @@ public class SPT {
         }
     }
     
-    private class func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?) -> URLRequest? {
+    private class func perform(request: URLRequestConvertible, completion: ((Error?) -> Void)?) {
+
+        AF.request(request).response { response in
+            if let error = response.error {
+                completion?(error)
+                return
+            }
+            guard let data = response.data,
+                let error = try? SPTJSONDecoder().decode(SPTError.self, from: data) else {
+                completion?(nil)
+                return
+            }
+            completion?(error)
+        }
+    }
+    
+    private class func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
         
         guard let token = SPT.authorizationToken, !token.isEmpty else {
             print("*** Authorization token cannot be empty ***")
             return nil
         }
-        let header = HTTPHeader(name: "Authorization", value: "Bearer " + token)
+        
         guard let url = method.composed(pathParam: pathParam, queryParams: queryParams),
-            let request = try? URLRequest(url: url, method: method.method, headers: HTTPHeaders(arrayLiteral: header)) else {
+            var request = try? URLRequest(url: url, method: method.method) else {
                 return nil
+        }
+        request.headers.add(name: "Authorization", value: "Bearer " + token)
+        if let body = body, let data = try? JSONSerialization.data(withJSONObject: body, options: []) {
+            request.headers.add(name: "Content-Type", value: "application/json")
+            request.httpBody = data
         }
         return request
     }
-    
-    private init() {}
 }
