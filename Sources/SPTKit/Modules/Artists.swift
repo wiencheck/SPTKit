@@ -1,9 +1,22 @@
+// Copyright (c) 2020 Adam Wienconek <adwienc@icloud.com>
 //
-//  File.swift
-//  
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//  Created by Adam Wienconek on 20/09/2020.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 import Foundation
 import SPTKitModels
@@ -12,10 +25,17 @@ public extension SPT {
     /**
      Endpoints for retrieving information about one or more artists from the Spotify catalog.
      */
-    class Artists {
+    final class Artists {
         /**
          Get artist.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/)
+         
+         - Parameters:
+            - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
+            - limit: The maximum number of tracks to return.
+            - offset: The index of the first track to return. Default: 0 (the first object). Use with limit to get the next set of tracks.
+            - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+            - completion: Handler containing decoded objects, called after completing the request.
         */
         public class func getArtist(id: String, completion: @escaping (Result<SPTArtist, Error>) -> Void) {
             
@@ -33,8 +53,12 @@ public extension SPT {
             - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
             - completion: Handler called on success or failure.
         */
-        public class func getArtistAlbums(id: String, groups: [SPTSimplifiedAlbum.AlbumGroup], market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<[SPTSimplifiedAlbum], Error>) -> Void) {
-            
+        public class func getArtistAlbums(id: String, groups: [SPTSimplifiedAlbum.AlbumGroup] = SPTSimplifiedAlbum.AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedAlbum>, Error>) -> Void) {
+            if groups.isEmpty {
+                let error = SPTError.albumGroupsEmpty
+                completion(.failure(error))
+                return
+            }
             var queryParams = [
                 "limit": String(limit),
                 "offset": String(offset),
@@ -50,6 +74,13 @@ public extension SPT {
         /**
          Get Spotify catalog information about an artist’s top tracks by country.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-top-tracks/)
+         
+         - Parameters:
+            - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
+            - limit: The maximum number of tracks to return.
+            - offset: The index of the first track to return. Default: 0 (the first object). Use with limit to get the next set of tracks.
+            - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+            - completion: Handler containing decoded objects, called after completing the request.
          */
         public class func getArtistTopTracks(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
 
@@ -69,9 +100,15 @@ public extension SPT {
         /**
          Get Spotify catalog information for several artists based on their Spotify IDs.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-several-artists/)
+         - Parameters:
+            - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
+            - completion: Handler containing decoded objects, called after completing the request.
          */
         public class func getSeveralArtists(ids: [String], completion: @escaping (Result<[SPTArtist], Error>) -> Void) {
             
+            if ids.count > 50 {
+                print("*** Warning, maximum number of requested ids is 50, but \(ids.count) have been passed to the method.")
+            }
             let queryParams = [
                 "ids": ids.joined(separator: ",")
             ]

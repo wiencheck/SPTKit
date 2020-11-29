@@ -1,9 +1,22 @@
+// Copyright (c) 2020 Adam Wienconek <adwienc@icloud.com>
 //
-//  File.swift
-//  
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//  Created by Adam Wienconek on 20/09/2020.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 import Foundation
 import SPTKitModels
@@ -13,7 +26,7 @@ public extension SPT {
     /**
      Endpoints for retrieving information about a user’s playlists and for managing a user’s playlists.
      */
-    class Playlists {
+    final class Playlists {
         /**
          Get a playlist owned by a Spotify user.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
@@ -47,7 +60,7 @@ public extension SPT {
          - Parameters:
             - id: The Spotify ID for the playlist.
             - uris: Array of `Spotify URIs` to add, can be track or episode URL. Example URI: `spotify:track:0Zn0jtLj2ehkIPxlCoO65O`
-            - position: The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
+            - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
             - completion: Handler called after completing the request.
          */
         public class func addTracksToPlaylist(id: String, uris: [String], position: Int?, completion: ((Error?) -> Void)?) {
@@ -64,6 +77,32 @@ public extension SPT {
             let dict = ["tracks": values]
             
             SPT.call(method: Method.addItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
+        }
+        
+        /**
+         Add one or more items to a user’s playlist.
+         [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/add-tracks-to-playlist/)
+         - Parameters:
+            - id: The Spotify ID for the playlist.
+            - uris: Array of `Spotify URIs` to add, can be track or episode URL. Example URI: `spotify:track:0Zn0jtLj2ehkIPxlCoO65O`
+            - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
+            - completion: Handler called after completing the request.
+         */
+        public class func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]]?, completion: ((Error?) -> Void)?) {
+            
+            let queryParams = [
+                "uris": uris.joined(separator: ",")
+            ]
+            let values = uris.enumerated().map { (idx: Int, uri: String) -> [String: Any] in
+                var value: [String: Any] = ["uri": uri]
+                if let positions = positions?[idx] {
+                    value.updateValue(positions, forKey: "positions")
+                }
+                return value
+            }
+            let dict = ["tracks": values]
+            
+            SPT.call(method: Method.removeItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
         }
             
         private enum Method: SPTMethod {
