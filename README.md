@@ -32,13 +32,13 @@ Some methods have to declare user's country code to properly return available ob
 `SPT.countryCode = "de"`
 
 ### How to call the methods
-To use methods provided by SPTKit you use modules for each endpoint. Spotify's Web API has various endpoints for calling methods for albums, library, search etc. and that structure is reflected in SPTKit. Methods are contained inside Modules and each Module represents API endpoint like you'd see in the [API reference docs](https://developer.spotify.com/documentation/web-api/reference/)
+To use methods provided by SPTKit you use **Modules** for each endpoint. Spotify's Web API has various endpoints for calling methods for albums, library, search etc. and that structure is reflected in SPTKit. Methods are contained inside modules and each module represents API endpoint like you'd see in the [API reference docs](https://developer.spotify.com/documentation/web-api/reference/)
 
 ![api-reference](https://i.imgur.com/31oYFzL.png)
 
-For example, to [get an Album](https://developer.spotify.com/documentation/web-api/reference/albums/get-album/) method, you'd use the Album module and its getAlbum method, like this:
+For example, to [get an Album](https://developer.spotify.com/documentation/web-api/reference/albums/get-album/) method, you'd use the `Album` module and its `getAlbum` method, like this:
 `SPT.Album.getAlbum(...`
-To [read user's saved albums](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/) you use the `.Library` module, like this
+To [read user's saved albums](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/) you use the `Library` module, like this
 `SPT.Library.getSavedAlbums(...`
 
 You get the idea.
@@ -101,9 +101,9 @@ func handlePage<T>(_ page: SPTPagingObject<T>) where T: Decodable {
 
 ### Handling errors
 There are 3 cases in which errors can be raised, each one returning different type of an error:
-* Request error - Request couldn't be completed because of faulty internet connection or something like that. Returned error is of type **AFError**
-* Service error - Request sucseeded but was invalid. This can happen if authorization token was not provided, parameters passed to method were in incorrect format, etc. Returned error is of type **SPTError**
-**Example error structure**
+* Request error - Request couldn't be completed because of faulty internet connection or something like that
+* Service error - Request sucseeded but was invalid. This can happen if authorization token was not provided, parameters passed to method were in incorrect format, etc.
+**Example service error structure**
 ```
 {
   "error": {
@@ -112,7 +112,7 @@ There are 3 cases in which errors can be raised, each one returning different ty
   }
 }
 ```
-* Decoding error. This type of error should not happen, but in case it does, what it means is that there was a change in returned JSON and it couldn't be decoded correctly. Or I screwed up something along the way, which we know can't happen, right? Please report if you encounter this error. Returned error is `SPTError.decodingError`
+* Decoding error. This type of error should not happen, but in case it does, what it means is that there was a change in returned JSON and it couldn't be decoded correctly. Or I screwed up something along the way, which we know can't happen, right? Please report if you encounter this error.
 
 ### Missing methods
 Not all methods from the Web API are supported at the moment. Especially podcasts are currently not existent in this library. I am still working on this library so if you need any methods that are not implemented yet, please create an issue or better, submit a PR!

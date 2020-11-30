@@ -18,10 +18,35 @@
 // THE SOFTWARE.
 
 import Foundation
+import SPTKitModels
 
 final class SPTJSONDecoder: JSONDecoder {
     override init() {
         super.init()
         dateDecodingStrategy = .iso8601
+    }
+    
+    override func decode<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
+        do {
+            return try super.decode(type.self, from: data)
+        } catch let DecodingError.dataCorrupted(context) {
+            print(context)
+            throw context.underlyingError ?? SPTError.decodingError
+        } catch let DecodingError.keyNotFound(key, context) {
+            print("Key '\(key)' not found:", context.debugDescription)
+            print("codingPath:", context.codingPath)
+            throw context.underlyingError ?? SPTError.decodingError
+        } catch let DecodingError.valueNotFound(value, context) {
+            print("Value '\(value)' not found:", context.debugDescription)
+            print("codingPath:", context.codingPath)
+            throw context.underlyingError ?? SPTError.decodingError
+        } catch let DecodingError.typeMismatch(type, context)  {
+            print("Type '\(type)' mismatch:", context.debugDescription)
+            print("codingPath:", context.codingPath)
+            throw context.underlyingError ?? SPTError.decodingError
+        } catch {
+            print("error: ", error)
+            throw error
+        }
     }
 }
