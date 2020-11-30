@@ -2,7 +2,7 @@
 
 # SPTKit
 
-SPTKit is a lightweight, elegant and easy to use **Spotify Web API** wrapper written in pure Swift. It is built around Swift's [Codable](https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types) and [Alamofire](https://github.com/Alamofire/Alamofire) to offer great perfomance and low dependency number for your project. SPTKit makes calls to Web API and returns clean, easy to use objects which can be then easily stored on the device via good old JSONEncoder.
+SPTKit is a lightweight, elegant and easy to use **Spotify Web API** wrapper written in pure Swift. It is built around Swift's [Codable](https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types) to offer great perfomance and simplicity. SPTKit makes calls to Web API and returns clean, easy to use objects which can be then easily stored on the device via good old JSONEncoder.
 
 ## Requirements
 * iOS 10+ / macOS 10.12+ / tvOS 10+ / watchOS 3+
