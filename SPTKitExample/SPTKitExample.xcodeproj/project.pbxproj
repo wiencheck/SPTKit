@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,9 +16,6 @@
 		2B607CFD251733D90056F917 /* SpotifyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B607CFC251733D90056F917 /* SpotifyManager.swift */; };
 		2B607D002517343B0056F917 /* SpotifyiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B607CFE2517342B0056F917 /* SpotifyiOS.framework */; };
 		2B607D062517351B0056F917 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B607D052517351B0056F917 /* Notifications.swift */; };
-		2BA8B64F2573CFA9007CF3DD /* SPTKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2BA8B64E2573CFA9007CF3DD /* SPTKit */; };
-		2BAD2BA0252F94D600B4C703 /* SPTKitModels in Frameworks */ = {isa = PBXBuildFile; productRef = 2BAD2B9F252F94D600B4C703 /* SPTKitModels */; };
-		2BAD2BA2252FA01400B4C703 /* SPTKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2BAD2BA1252FA01400B4C703 /* SPTKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,9 +38,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2BAD2BA0252F94D600B4C703 /* SPTKitModels in Frameworks */,
-				2BA8B64F2573CFA9007CF3DD /* SPTKit in Frameworks */,
-				2BAD2BA2252FA01400B4C703 /* SPTKit in Frameworks */,
 				2B607D002517343B0056F917 /* SpotifyiOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -110,9 +104,6 @@
 			);
 			name = SPTKitExample;
 			packageProductDependencies = (
-				2BAD2B9F252F94D600B4C703 /* SPTKitModels */,
-				2BAD2BA1252FA01400B4C703 /* SPTKit */,
-				2BA8B64E2573CFA9007CF3DD /* SPTKit */,
 			);
 			productName = SPTKitExample;
 			productReference = 2B15D500251624DD008EE882 /* SPTKitExample.app */;
@@ -144,7 +135,6 @@
 			);
 			mainGroup = 2B15D4F7251624DD008EE882;
 			packageReferences = (
-				2BA8B64D2573CFA9007CF3DD /* XCRemoteSwiftPackageReference "SPTKit" */,
 			);
 			productRefGroup = 2B15D501251624DD008EE882 /* Products */;
 			projectDirPath = "";
@@ -390,33 +380,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		2BA8B64D2573CFA9007CF3DD /* XCRemoteSwiftPackageReference "SPTKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/wiencheck/SPTKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		2BA8B64E2573CFA9007CF3DD /* SPTKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2BA8B64D2573CFA9007CF3DD /* XCRemoteSwiftPackageReference "SPTKit" */;
-			productName = SPTKit;
-		};
-		2BAD2B9F252F94D600B4C703 /* SPTKitModels */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SPTKitModels;
-		};
-		2BAD2BA1252FA01400B4C703 /* SPTKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SPTKit;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2B15D4F8251624DD008EE882 /* Project object */;
 }

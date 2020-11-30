@@ -32,7 +32,7 @@ public extension SPT {
          */
         public class func getCurrentUser(completion: @escaping (Result<SPTPrivateUser, Error>) -> Void) {
             
-            SPT.call(method: Method.getCurrentUser, pathParam: nil, queryParams: nil, body: nil, completion: completion)
+            SPT.shared.call(method: Method.getCurrentUser, pathParam: nil, queryParams: nil, body: nil, completion: completion)
         }
         
         /**
@@ -43,7 +43,7 @@ public extension SPT {
          */
         public class func getUser(identifier: String, completion: @escaping (Result<SPTPublicUser, Error>) -> Void) {
             
-            SPT.call(method: Method.getUser, pathParam: identifier, queryParams: nil, body: nil, completion: completion)
+            SPT.shared.call(method: Method.getUser, pathParam: identifier, queryParams: nil, body: nil, completion: completion)
         }
         
         private enum Method: SPTMethod {

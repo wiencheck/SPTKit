@@ -20,7 +20,6 @@
 
 import Foundation
 import SPTKitModels
-import Alamofire
 
 public extension SPT {
     /**
@@ -36,7 +35,7 @@ public extension SPT {
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -51,7 +50,7 @@ public extension SPT {
             ]
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.call(method: Method.getPlaylistTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.getPlaylistTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -76,7 +75,7 @@ public extension SPT {
             }
             let dict = ["tracks": values]
             
-            SPT.call(method: Method.addItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
+            SPT.shared.call(method: Method.addItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
         }
         
         /**
@@ -102,7 +101,7 @@ public extension SPT {
             }
             let dict = ["tracks": values]
             
-            SPT.call(method: Method.removeItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
+            SPT.shared.call(method: Method.removeItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
         }
             
         private enum Method: SPTMethod {

@@ -20,7 +20,6 @@
 
 import Foundation
 import SPTKitModels
-import Alamofire
 
 public extension SPT {
     /**
@@ -46,7 +45,7 @@ public extension SPT {
             if let market = market {
                 queryParams["market"] = market
             }
-            SPT.call(method: Method.savedAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.savedAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -67,7 +66,7 @@ public extension SPT {
             if let market = market {
                 queryParams["market"] = market
             }
-            SPT.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -84,7 +83,7 @@ public extension SPT {
                 "limit": String(limit),
                 "offset": String(offset),
             ]
-            SPT.call(method: Method.savedPlaylists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.savedPlaylists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -98,7 +97,7 @@ public extension SPT {
             let queryParams = [
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.call(method: Method.saveTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.saveTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -113,7 +112,7 @@ public extension SPT {
             let queryParams = [
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.call(method: Method.saveAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.saveAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -128,7 +127,7 @@ public extension SPT {
             let queryParams = [
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.call(method: Method.checkSavedAlbums, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<[Bool], Error>) in
+            SPT.shared.call(method: Method.checkSavedAlbums, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<[Bool], Error>) in
                 switch result {
                 case .success(let values):
                     let dict = Dictionary(uniqueKeysWithValues: zip(ids, values))
@@ -151,7 +150,7 @@ public extension SPT {
             let queryParams = [
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.call(method: Method.checkSavedTracks, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<[Bool], Error>) in
+            SPT.shared.call(method: Method.checkSavedTracks, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<[Bool], Error>) in
                 switch result {
                 case .success(let values):
                     let dict = Dictionary(uniqueKeysWithValues: zip(ids, values))
@@ -174,7 +173,7 @@ public extension SPT {
             let queryParams = [
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.call(method: Method.removeTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.removeTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -188,7 +187,7 @@ public extension SPT {
             let queryParams = [
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.call(method: Method.removeAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.removeAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         private init() {}

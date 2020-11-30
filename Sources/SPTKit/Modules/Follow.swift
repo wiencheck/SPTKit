@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import SPTKitModels
-import Alamofire
 
 public extension SPT {
     /**
@@ -39,7 +38,7 @@ public extension SPT {
                 "type": "artist",
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -55,7 +54,7 @@ public extension SPT {
                 "type": "user",
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.shared.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -66,7 +65,7 @@ public extension SPT {
          */
         public class func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
             
-            SPT.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
+            SPT.shared.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
         }
         
         private enum Method: SPTMethod {

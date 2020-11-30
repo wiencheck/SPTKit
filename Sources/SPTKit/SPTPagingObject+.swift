@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import Foundation
-import Alamofire
 import SPTKitModels
 
 extension SPTPagingObject {
@@ -34,41 +33,20 @@ extension SPTPagingObject {
     private func getPage(url: URL?, completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
         
         guard let url = url,
-            let request = Self.forgeRequest(url: url, method: .get) else {
+            let request = forgeRequest(url: url, method: .get) else {
                 completion(.failure(SPTError.badRequest))
                 return
         }
-        AF.request(request).responseData { response in
-            if let error = response.error {
-                completion(.failure(error))
-                return
-            }
-            guard let data = response.value else {
-                completion(.failure(SPTError.noDataReceivedError))
-                return
-            }
-            if let error = try? SPTJSONDecoder().decode(SPTError.self, from: data) {
-                completion(.failure(error))
-            } else {
-                do {
-                    let object = try SPTJSONDecoder().decode(SPTPagingObject<T>.self, from: data)
-                    completion(.success(object))
-                } catch let error {
-                    completion(.failure(error))
-                }
-            }
-        }
+        SPT.shared.perform(request: request, completion: completion)
     }
     
-    private class func forgeRequest(url: URL, method: HTTPMethod) -> URLRequest? {
+    private func forgeRequest(url: URL, method: HTTPMethod) -> URLRequest? {
         guard let token = SPT.authorizationToken, !token.isEmpty else {
             print("*** Authorization token cannot be empty ***")
             return nil
         }
-        let header = HTTPHeader(name: "Authorization", value: "Bearer " + token)
-        guard let request = try? URLRequest(url: url, method: method, headers: HTTPHeaders(arrayLiteral: header)) else {
-                return nil
-        }
-        return request
+        return URLRequest(url: url, method: method, headers: [
+            "Authorization": "Bearer " + token
+        ])
     }
 }

@@ -30,14 +30,14 @@ class ViewController: UIViewController {
     }
     
     private func fetchArtists(with ids: [String]) {
-                SPT.Artists.getSeveralArtists(ids: ids) { result in
-                    switch result {
-                    case .success(let artists):
-                        print(artists.first?.name)
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    }
-                }
+        SPT.Artists.getSeveralArtists(ids: ids) { result in
+            switch result {
+            case .success(let artists):
+                print(artists.first?.name)
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
     
     func handlePage<T>(_ page: SPTPagingObject<T>) where T: Decodable {

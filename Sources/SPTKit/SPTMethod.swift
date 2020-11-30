@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import Foundation
-import Alamofire
 
 protocol SPTMethod {
     var path: String { get }

@@ -19,10 +19,14 @@
 // THE SOFTWARE.
 
 import Foundation
-import Alamofire
 import SPTKitModels
 
 public class SPT {
+    /**
+     Shared instance.
+     */
+    internal static let shared = SPT()
+    
     /**
      A valid access token from the Spotify Accounts service. This library does not take the responsibility of authentication. You have to implement it by yourself. [Read more](https://developer.spotify.com/documentation/general/guides/authorization-guide/)
      */
@@ -37,13 +41,15 @@ public class SPT {
      Default value is current `Locale`'s region code.
      */
     public static var countryCode: String? = Locale.current.regionCode
+        
+    private let session = URLSession.shared
     
     private init() {}
 }
 
 // MARK: Internal methods
 extension SPT {
-    class func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion(.failure(SPTError.badRequest))
@@ -52,7 +58,7 @@ extension SPT {
         perform(request: request, completion: completion)
     }
     
-    class func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
+    func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
         
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion?(SPTError.badRequest)
@@ -62,77 +68,98 @@ extension SPT {
     }
     
     // MARK: Private stuff
-    private class func perform<T>(request: URLRequestConvertible, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
-
-        AF.request(request).response { response in
-            if let error = response.error {
+    internal func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+        
+        session.dataTask(with: request) { data, response, error in
+            // Check for any connection errors
+            if let error = error {
                 completion(.failure(error))
                 return
             }
-            guard let data = response.data else {
+            // Read data
+            guard let data = data, !data.isEmpty else {
                 completion(.failure(SPTError.noDataReceivedError))
                 return
             }
-            if let error = try? SPTJSONDecoder().decode(SPTError.self, from: data) {
-                completion(.failure(error))
-            } else {
-                do {
-                    let object = try SPTJSONDecoder().decode(T.self, from: data)
-                    completion(.success(object))
-                } catch let DecodingError.dataCorrupted(context) {
-                    print(context)
-                    completion(.failure(context.underlyingError ?? SPTError.decodingError))
-                } catch let DecodingError.keyNotFound(key, context) {
-                    print("Key '\(key)' not found:", context.debugDescription)
-                    print("codingPath:", context.codingPath)
-                    completion(.failure(context.underlyingError ?? SPTError.decodingError))
-                } catch let DecodingError.valueNotFound(value, context) {
-                    print("Value '\(value)' not found:", context.debugDescription)
-                    print("codingPath:", context.codingPath)
-                    completion(.failure(context.underlyingError ?? SPTError.decodingError))
-                } catch let DecodingError.typeMismatch(type, context)  {
-                    print("Type '\(type)' mismatch:", context.debugDescription)
-                    print("codingPath:", context.codingPath)
-                    completion(.failure(context.underlyingError ?? SPTError.decodingError))
-                } catch {
-                    print("error: ", error)
-                }
+            // Check response's status code, if it's anything other than 200 (OK), try to decode SPTError from the data.
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                let sptError = (try? JSONDecoder().decode(SPTError.self, from: data)) ?? SPTError.badResponse
+                completion(.failure(sptError))
+                return
             }
-        }
-    }
-    
-    private class func perform(request: URLRequestConvertible, completion: ((Error?) -> Void)?) {
+            // Decode requested objects
+            do {
+                let object = try SPTJSONDecoder().decode(T.self, from: data)
+                completion(.success(object))
+            } catch let DecodingError.dataCorrupted(context) {
+                print(context)
+                completion(.failure(context.underlyingError ?? SPTError.decodingError))
+            } catch let DecodingError.keyNotFound(key, context) {
+                print("Key '\(key)' not found:", context.debugDescription)
+                print("codingPath:", context.codingPath)
+                completion(.failure(context.underlyingError ?? SPTError.decodingError))
+            } catch let DecodingError.valueNotFound(value, context) {
+                print("Value '\(value)' not found:", context.debugDescription)
+                print("codingPath:", context.codingPath)
+                completion(.failure(context.underlyingError ?? SPTError.decodingError))
+            } catch let DecodingError.typeMismatch(type, context)  {
+                print("Type '\(type)' mismatch:", context.debugDescription)
+                print("codingPath:", context.codingPath)
+                completion(.failure(context.underlyingError ?? SPTError.decodingError))
+            } catch {
+                print("error: ", error)
+            }
+        }.resume()
+}
 
-        AF.request(request).response { response in
-            if let error = response.error {
-                completion?(error)
-                return
-            }
-            guard let data = response.data,
-                let error = try? SPTJSONDecoder().decode(SPTError.self, from: data) else {
-                completion?(nil)
-                return
-            }
+internal func perform(request: URLRequest, completion: ((Error?) -> Void)?) {
+    
+    session.dataTask(with: request) { data, response, error in
+        // Check any connection errors
+        if let error = error {
             completion?(error)
+            return
         }
+        // If status code is 200 (OK), return successfully
+        if let httpResponse = response as? HTTPURLResponse,
+           httpResponse.statusCode == 200 {
+            completion?(nil)
+            return
+        }
+        // Read any data which will represent service error from Spotify
+        guard let data = data, !data.isEmpty else {
+            completion?(nil)
+            return
+        }
+        // Decode error
+        do {
+            let sptError = try JSONDecoder().decode(SPTError.self, from: data)
+            completion?(sptError)
+        } catch let decodingError {
+            completion?(decodingError)
+        }
+    }.resume()
+}
+
+private func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
+    
+    guard let token = SPT.authorizationToken, !token.isEmpty else {
+        print("*** Authorization token cannot be empty ***")
+        return nil
     }
     
-    private class func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
-        
-        guard let token = SPT.authorizationToken, !token.isEmpty else {
-            print("*** Authorization token cannot be empty ***")
-            return nil
-        }
-        
-        guard let url = method.composed(pathParam: pathParam, queryParams: queryParams),
-            var request = try? URLRequest(url: url, method: method.method) else {
-                return nil
-        }
-        request.headers.add(name: "Authorization", value: "Bearer " + token)
-        if let body = body, let data = try? JSONSerialization.data(withJSONObject: body, options: []) {
-            request.headers.add(name: "Content-Type", value: "application/json")
-            request.httpBody = data
-        }
-        return request
+    guard let url = method.composed(pathParam: pathParam, queryParams: queryParams) else {
+        return nil
     }
+    var request = URLRequest(url: url, method: method.method, headers: [
+        "Authorization": "Bearer " + token
+    ])
+    
+    if let body = body, let data = try? JSONSerialization.data(withJSONObject: body, options: []) {
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = data
+    }
+    return request
+}
 }
