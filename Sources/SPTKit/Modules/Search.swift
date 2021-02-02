@@ -25,8 +25,12 @@ public extension SPT {
     final class Search {
         /**
          Get Spotify Catalog information about albums, artists, playlists, tracks, shows or episodes that match a keyword string.
+         Query must not be empty.
          */
         public class func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
+            if query.isEmpty {
+                return
+            }
             
             var queryParams = [
                 "q": query,

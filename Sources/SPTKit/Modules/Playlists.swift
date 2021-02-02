@@ -79,8 +79,8 @@ public extension SPT {
         }
         
         /**
-         Add one or more items to a user’s playlist.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/add-tracks-to-playlist/)
+         Remove one or more items from a user’s playlist.
+         [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/remove-tracks-playlist/)
          - Parameters:
             - id: The Spotify ID for the playlist.
             - uris: Array of `Spotify URIs` to add, can be track or episode URL. Example URI: `spotify:track:0Zn0jtLj2ehkIPxlCoO65O`

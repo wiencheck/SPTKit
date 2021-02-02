@@ -60,6 +60,9 @@ extension SpotifyManager: SPTSessionManagerDelegate {
             .userReadPlaybackState,
             .userReadPrivate,
             .userReadRecentlyPlayed,
+            .userModifyPlaybackState,
+            .userReadCurrentlyPlaying,
+            .userReadRecentlyPlayed,
             .userTopRead,
             .playlistModifyPrivate,
             .playlistModifyPublic

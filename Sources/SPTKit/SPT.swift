@@ -68,7 +68,7 @@ extension SPT {
     }
     
     // MARK: Private stuff
-    internal func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
         session.dataTask(with: request) { data, response, error in
             // Check for any connection errors
@@ -82,9 +82,14 @@ extension SPT {
                 return
             }
             // Check response's status code, if it's anything other than 200 (OK), try to decode SPTError from the data.
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                let sptError = (try? JSONDecoder().decode(SPTError.self, from: data)) ?? SPTError.badResponse
+            guard let httpResponse = response as? HTTPURLResponse else {
+                let error = SPTError.badRequest
+                completion(.failure(error))
+                return
+            }
+            guard httpResponse.statusCode == 200 else {
+                var sptError = (try? JSONDecoder().decode(SPTError.self, from: data)) ?? SPTError.badResponse
+                sptError.additionalHeaders = httpResponse.allHeaderFields
                 completion(.failure(sptError))
                 return
             }
@@ -107,8 +112,10 @@ extension SPT {
                 return
             }
             // If status code is 200 (OK), return successfully
+            // If 201, "snapshot_id" was returned
             if let httpResponse = response as? HTTPURLResponse,
-               httpResponse.statusCode == 200 {
+               httpResponse.statusCode == 200 ||
+                httpResponse.statusCode == 201 {
                 completion?(nil)
                 return
             }
