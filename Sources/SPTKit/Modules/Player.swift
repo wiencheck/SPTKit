@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SPTKitModels
 
 public extension SPT {
     final class Player {

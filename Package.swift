@@ -24,8 +24,5 @@ let package = Package(
         .target(
             name: "SPTKit",
             dependencies: ["SPTKitModels"]),
-        .testTarget(
-            name: "SPTKitTests",
-            dependencies: ["SPTKit"]),
     ]
 )
