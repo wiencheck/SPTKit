@@ -20,11 +20,11 @@
 import Foundation
 import SPTKitModels
 
-public extension SPT {
+extension SPT {
     /**
      Endpoints for retrieving information about one or more artists from the Spotify catalog.
      */
-    final class Artists {
+    public enum Artists {
         /**
          Get artist.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/)
@@ -36,7 +36,7 @@ public extension SPT {
             - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
             - completion: Handler containing decoded objects, called after completing the request.
         */
-        public class func getArtist(id: String, completion: @escaping (Result<SPTArtist, Error>) -> Void) {
+        public static func getArtist(id: String, completion: @escaping (Result<SPTArtist, Error>) -> Void) {
             
             SPT.shared.call(method: Method.artist, pathParam: id, queryParams: nil, body: nil, completion: completion)
         }
@@ -52,7 +52,7 @@ public extension SPT {
             - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
             - completion: Handler called on success or failure.
         */
-        public class func getArtistAlbums(id: String, groups: [SPTSimplifiedAlbum.AlbumGroup] = SPTSimplifiedAlbum.AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedAlbum>, Error>) -> Void) {
+        public static func getArtistAlbums(id: String, groups: [SPTSimplifiedAlbum.AlbumGroup] = SPTSimplifiedAlbum.AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedAlbum>, Error>) -> Void) {
             if groups.isEmpty {
                 let error = SPTError.albumGroupsEmpty
                 completion(.failure(error))
@@ -81,7 +81,7 @@ public extension SPT {
             - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public class func getArtistTopTracks(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
+        public static func getArtistTopTracks(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
 
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "country")
@@ -103,7 +103,7 @@ public extension SPT {
             - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public class func getSeveralArtists(ids: [String], completion: @escaping (Result<[SPTArtist], Error>) -> Void) {
+        public static func getSeveralArtists(ids: [String], completion: @escaping (Result<[SPTArtist], Error>) -> Void) {
             
             if ids.count > 50 {
                 print("*** Warning, maximum number of requested ids is 50, but \(ids.count) have been passed to the method.")
@@ -125,7 +125,7 @@ public extension SPT {
          Get Spotify catalog information about artists similar to a given artist. Similarity is based on analysis of the Spotify community’s listening history.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-related-artists/)
          */
-        public class func getArtistRelatedArtists(id: String, completion: @escaping (Result<[SPTArtist], Error>) -> Void) {
+        public static func getArtistRelatedArtists(id: String, completion: @escaping (Result<[SPTArtist], Error>) -> Void) {
 
             SPT.shared.call(method: Method.relatedArtists, pathParam: id, queryParams: nil, body: nil) { (result: Result<Nested<SPTArtist>, Error>) in
                 switch result {
@@ -137,7 +137,6 @@ public extension SPT {
             }
         }
         
-        private init() {}
         private enum Method: SPTMethod {
             case artist, severalArtists, artistAlbums, topTracks, relatedArtists
             

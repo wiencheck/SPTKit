@@ -8,12 +8,12 @@
 import Foundation
 import SPTKitModels
 
-public extension SPT {
-    final class Player {
+extension SPT {
+    public enum Player {
         /**
          Get information about a user’s available devices.
          */
-        public class func getAvailableDevices(completion: @escaping (Result<[SPTDevice], Error>) -> Void) {
+        public static func getAvailableDevices(completion: @escaping (Result<[SPTDevice], Error>) -> Void) {
             
             SPT.shared.call(method: Method.devices, pathParam: nil, queryParams: nil, body: nil)  { (result: Result<Nested<SPTDevice>, Error>) in
                 switch result {
@@ -25,7 +25,7 @@ public extension SPT {
             }
         }
         
-        public class func transferPlayback(deviceId: String, play: Bool = true, completion: ((Error?) -> Void)?) {
+        public static func transferPlayback(deviceId: String, play: Bool = true, completion: ((Error?) -> Void)?) {
             
             let body: [String: Any] = [
                 "device_ids": [deviceId],
@@ -37,7 +37,7 @@ public extension SPT {
         /**
          Resume current playback on the user’s active device.
          */
-        public class func resumePlayback(deviceId: String? = nil, contextUri: String? = nil, uris: [String]? = nil, offset: Int? = nil, positionMs: Int? = nil, completion: ((Error?) -> Void)?) {
+        public static func resumePlayback(deviceId: String? = nil, contextUri: String? = nil, uris: [String]? = nil, offset: Int? = nil, positionMs: Int? = nil, completion: ((Error?) -> Void)?) {
             
             var queryParams: [String: String]?
             if let deviceId = deviceId {
@@ -62,7 +62,7 @@ public extension SPT {
             SPT.shared.call(method: Method.resume, pathParam: nil, queryParams: queryParams, body: body, completion: completion)
         }
         
-        public class func getCurrentlyPlayingTrack(completion: @escaping (Result<SPTPlayback, Error>) -> Void) {
+        public static func getCurrentlyPlayingTrack(completion: @escaping (Result<SPTPlayback, Error>) -> Void) {
 
             let queryParams = [
                 "market": SPT.countryCode ?? "en"
@@ -70,7 +70,7 @@ public extension SPT {
             SPT.shared.call(method: Method.currentTrack, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
-        public class func seekToPosition(positionMs: Int, deviceId: String? = nil, completion: ((Error?) -> Void)?) {
+        public static func seekToPosition(positionMs: Int, deviceId: String? = nil, completion: ((Error?) -> Void)?) {
             
             var queryParams = [
                 "position_ms": String(positionMs)
@@ -80,8 +80,6 @@ public extension SPT {
             }
             SPT.shared.call(method: Method.seek, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
-        
-        private init() {}
         
         private enum Method: SPTMethod {
             case transfer, resume, pause, devices, currentTrack, seek

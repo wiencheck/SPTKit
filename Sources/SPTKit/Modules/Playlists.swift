@@ -20,16 +20,16 @@
 import Foundation
 import SPTKitModels
 
-public extension SPT {
+extension SPT {
     /**
      Endpoints for retrieving information about a user’s playlists and for managing a user’s playlists.
      */
-    final class Playlists {
+    public enum Playlists {
         /**
          Get a playlist owned by a Spotify user.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
          */
-        public class func getPlaylist(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
+        public static func getPlaylist(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
             
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "market")
@@ -41,7 +41,7 @@ public extension SPT {
          Get full details of the tracks or episodes of a playlist owned by a Spotify user.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlists-tracks/)
          */
-        public class func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTPlaylistTrack>, Error>) -> Void) {
+        public static func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTPlaylistTrack>, Error>) -> Void) {
             
             var queryParams = [
                 "limit": String(limit),
@@ -61,7 +61,7 @@ public extension SPT {
             - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
             - completion: Handler called after completing the request.
          */
-        public class func addTracksToPlaylist(id: String, uris: [String], position: Int?, completion: ((Error?) -> Void)?) {
+        public static func addTracksToPlaylist(id: String, uris: [String], position: Int?, completion: ((Error?) -> Void)?) {
             
             var queryParams = [
                 "uris": uris.joined(separator: ",")
@@ -86,7 +86,7 @@ public extension SPT {
             - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
             - completion: Handler called after completing the request.
          */
-        public class func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]]?, completion: ((Error?) -> Void)?) {
+        public static func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]]?, completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "uris": uris.joined(separator: ",")
@@ -145,7 +145,5 @@ public extension SPT {
                 }
             }
         }
-        
-        private init() {}
     }
 }

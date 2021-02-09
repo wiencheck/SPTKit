@@ -19,11 +19,11 @@
 
 import SPTKitModels
 
-public extension SPT {
+extension SPT {
     /**
      Endpoints for managing the artists, users, and playlists that a Spotify user follows.
      */
-    final class Follow {
+    public enum Follow {
         /**
          Add the current user as a follower of one or more artists.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
@@ -31,7 +31,7 @@ public extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public class func followArtists(ids: [String], completion: ((Error?) -> Void)?) {
+        public static func followArtists(ids: [String], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "type": "artist",
@@ -47,7 +47,7 @@ public extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public class func followUsers(ids: [String], completion: ((Error?) -> Void)?) {
+        public static func followUsers(ids: [String], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "type": "user",
@@ -62,7 +62,7 @@ public extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public class func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
+        public static func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
             
             SPT.shared.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
         }
@@ -94,7 +94,5 @@ public extension SPT {
                 }
             }
         }
-        
-        private init() {}
     }
 }

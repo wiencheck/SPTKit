@@ -20,15 +20,15 @@
 import Foundation
 import SPTKitModels
 
-public extension SPT {
+extension SPT {
     /**
      Endpoints for retrieving information about one or more tracks from the Spotify catalog.
      */
-    final class Tracks {
+    public enum Tracks {
         /**
          Get Spotify catalog information for a single track identified by its unique Spotify ID.
          */
-        public class func getTrack(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTTrack, Error>) -> Void) {
+        public static func getTrack(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTTrack, Error>) -> Void) {
             
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "market")
@@ -38,7 +38,7 @@ public extension SPT {
         /**
          Get Spotify catalog information for multiple tracks based on their Spotify IDs.
          */
-        public class func getSeveralTracks(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
+        public static func getSeveralTracks(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
             
             var queryParams = [
                 "ids": ids.joined(separator: ",")
@@ -55,7 +55,6 @@ public extension SPT {
             }
         }
         
-        private init() {}
         private enum Method: SPTMethod {
             case track, severalTracks
             

@@ -20,13 +20,13 @@
 import Foundation
 import SPTKitModels
 
-public extension SPT {
-    final class Search {
+extension SPT {
+    public enum Search {
         /**
          Get Spotify Catalog information about albums, artists, playlists, tracks, shows or episodes that match a keyword string.
          Query must not be empty.
          */
-        public class func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
+        public static func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
             if query.isEmpty {
                 return
             }
@@ -44,7 +44,7 @@ public extension SPT {
             SPT.shared.call(method: Method.search, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
-        public class func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
+        public static func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
             
             /*
              Field filters: By default, results are returned when a match is found in any field of the target object type. Searches can be made more specific by specifying an album, artist or track field filter. For example: The query q=album:gold%20artist:abba&type=album returns only albums with the text “gold” in the album name and the text “abba” in the artist name.

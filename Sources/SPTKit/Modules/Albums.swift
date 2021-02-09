@@ -20,11 +20,11 @@
 import Foundation
 import SPTKitModels
 
-public extension SPT {
+extension SPT {
     /**
      Endpoints for retrieving information about one or more albums from the Spotify catalog.
      */
-    final class Albums {
+    public enum Albums {
         /**
          Get Spotify catalog information for a single album.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/albums/get-album/)
@@ -34,7 +34,7 @@ public extension SPT {
          - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
          - completion: Handler containing decoded objects, called after completing the request.
          */
-        public class func getAlbum(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTAlbum, Error>) -> Void) {
+        public static func getAlbum(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTAlbum, Error>) -> Void) {
 
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "market")
@@ -53,7 +53,7 @@ public extension SPT {
             - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public class func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedTrack>, Error>) -> Void) {
+        public static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedTrack>, Error>) -> Void) {
 
             var queryParams = [
                 "limit": String(limit),
@@ -72,7 +72,7 @@ public extension SPT {
             - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public class func getSeveralAlbums(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTAlbum], Error>) -> Void) {
+        public static func getSeveralAlbums(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTAlbum], Error>) -> Void) {
 
             if ids.count > 50 {
                 print("*** Warning, maximum number of requested ids is 20, but \(ids.count) have been passed to the method.")
@@ -92,7 +92,6 @@ public extension SPT {
             }
         }
         
-        private init() {}
         private enum Method: SPTMethod {
             case album, albumTracks, severalAlbums
             
