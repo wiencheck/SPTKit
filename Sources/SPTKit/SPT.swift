@@ -20,11 +20,11 @@
 import Foundation
 import SPTKitModels
 
-public class SPT {
+public struct SPT {
     /**
      Shared instance.
      */
-    internal static let shared = SPT()
+    //internal static let shared = SPT()
     
     /**
      A valid access token from the Spotify Accounts service. This library does not take the responsibility of authentication. You have to implement it by yourself. [Read more](https://developer.spotify.com/documentation/general/guides/authorization-guide/)
@@ -41,14 +41,16 @@ public class SPT {
      */
     public static var countryCode: String? = Locale.current.regionCode
     
-    private let session = URLSession.shared
+    private static var session: URLSession {
+        return URLSession.shared
+    }
     
     private init() {}
 }
 
 // MARK: Internal methods
 extension SPT {
-    func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    static func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion(.failure(SPTError.badRequest))
@@ -57,7 +59,7 @@ extension SPT {
         perform(request: request, completion: completion)
     }
     
-    func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
+    static func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
         
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion?(SPTError.badRequest)
@@ -67,7 +69,7 @@ extension SPT {
     }
     
     // MARK: Private stuff
-    func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    static func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
         session.dataTask(with: request) { data, response, error in
             // Check for any connection errors
@@ -102,7 +104,7 @@ extension SPT {
         }.resume()
     }
     
-    internal func perform(request: URLRequest, completion: ((Error?) -> Void)?) {
+    internal static func perform(request: URLRequest, completion: ((Error?) -> Void)?) {
         
         session.dataTask(with: request) { data, response, error in
             // Check any connection errors
@@ -133,7 +135,7 @@ extension SPT {
         }.resume()
     }
     
-    private func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
+    private static func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
         
         guard let token = SPT.authorizationToken, !token.isEmpty else {
             print("*** Authorization token cannot be empty ***")

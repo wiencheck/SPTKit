@@ -36,7 +36,7 @@ extension SPTPagingObject {
                 completion(.failure(SPTError.badRequest))
                 return
         }
-        SPT.shared.perform(request: request, completion: completion)
+        SPT.perform(request: request, completion: completion)
     }
     
     private func forgeRequest(url: URL, method: HTTPMethod) -> URLRequest? {

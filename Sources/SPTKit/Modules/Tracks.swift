@@ -33,7 +33,7 @@ extension SPT {
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.shared.call(method: Method.severalTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.severalTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         /**
          Get Spotify catalog information for multiple tracks based on their Spotify IDs.
@@ -45,7 +45,7 @@ extension SPT {
             ]
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.shared.call(method: Method.severalTracks, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTTrack>, Error>) in
+            SPT.call(method: Method.severalTracks, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTTrack>, Error>) in
                 switch result {
                 case .success(let root):
                     completion(.success(root.items))

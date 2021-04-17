@@ -34,7 +34,7 @@ extension SPT {
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.shared.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -49,7 +49,7 @@ extension SPT {
             ]
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.shared.call(method: Method.getPlaylistTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.getPlaylistTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -74,7 +74,7 @@ extension SPT {
             }
             let dict = ["tracks": values]
             
-            SPT.shared.call(method: Method.addItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
+            SPT.call(method: Method.addItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
         }
         
         /**
@@ -86,21 +86,21 @@ extension SPT {
             - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
             - completion: Handler called after completing the request.
          */
-        public static func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]]?, completion: ((Error?) -> Void)?) {
+        public static func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "uris": uris.joined(separator: ",")
             ]
             let values = uris.enumerated().map { (idx: Int, uri: String) -> [String: Any] in
                 var value: [String: Any] = ["uri": uri]
-                if let positions = positions?[idx] {
-                    value.updateValue(positions, forKey: "positions")
+                if !positions.isEmpty {
+                    value.updateValue(positions[idx], forKey: "positions")
                 }
                 return value
             }
             let dict = ["tracks": values]
             
-            SPT.shared.call(method: Method.removeItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
+            SPT.call(method: Method.removeItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
         }
             
         private enum Method: SPTMethod {

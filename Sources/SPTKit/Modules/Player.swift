@@ -15,7 +15,7 @@ extension SPT {
          */
         public static func getAvailableDevices(completion: @escaping (Result<[SPTDevice], Error>) -> Void) {
             
-            SPT.shared.call(method: Method.devices, pathParam: nil, queryParams: nil, body: nil)  { (result: Result<Nested<SPTDevice>, Error>) in
+            SPT.call(method: Method.devices, pathParam: nil, queryParams: nil, body: nil)  { (result: Result<Nested<SPTDevice>, Error>) in
                 switch result {
                 case .success(let root):
                     completion(.success(root.items))
@@ -31,7 +31,7 @@ extension SPT {
                 "device_ids": [deviceId],
                 "play": play
             ]
-            SPT.shared.call(method: Method.transfer, pathParam: nil, queryParams: nil, body: body, completion: completion)
+            SPT.call(method: Method.transfer, pathParam: nil, queryParams: nil, body: body, completion: completion)
         }
         
         /**
@@ -59,7 +59,7 @@ extension SPT {
             if let positionMs = positionMs {
                 body["position_ms"] = positionMs
             }
-            SPT.shared.call(method: Method.resume, pathParam: nil, queryParams: queryParams, body: body, completion: completion)
+            SPT.call(method: Method.resume, pathParam: nil, queryParams: queryParams, body: body, completion: completion)
         }
         
         public static func getCurrentlyPlayingTrack(completion: @escaping (Result<SPTPlayback, Error>) -> Void) {
@@ -67,7 +67,7 @@ extension SPT {
             let queryParams = [
                 "market": SPT.countryCode ?? "en"
             ]
-            SPT.shared.call(method: Method.currentTrack, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.currentTrack, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         public static func seekToPosition(positionMs: Int, deviceId: String? = nil, completion: ((Error?) -> Void)?) {
@@ -78,7 +78,7 @@ extension SPT {
             if let deviceId = deviceId {
                 queryParams["device_id"] = deviceId
             }
-            SPT.shared.call(method: Method.seek, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.seek, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         private enum Method: SPTMethod {

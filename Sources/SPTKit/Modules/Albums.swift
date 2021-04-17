@@ -39,7 +39,7 @@ extension SPT {
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.shared.call(method: Method.album, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.album, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -61,7 +61,7 @@ extension SPT {
             ]
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.shared.call(method: Method.albumTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.albumTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -82,7 +82,7 @@ extension SPT {
             ]
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.shared.call(method: Method.severalAlbums, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTAlbum>, Error>) in
+            SPT.call(method: Method.severalAlbums, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTAlbum>, Error>) in
                 switch result {
                 case .success(let root):
                     completion(.success(root.items))

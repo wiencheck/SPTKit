@@ -38,7 +38,7 @@ extension SPT {
         */
         public static func getArtist(id: String, completion: @escaping (Result<SPTArtist, Error>) -> Void) {
             
-            SPT.shared.call(method: Method.artist, pathParam: id, queryParams: nil, body: nil, completion: completion)
+            SPT.call(method: Method.artist, pathParam: id, queryParams: nil, body: nil, completion: completion)
         }
         
         /**
@@ -67,7 +67,7 @@ extension SPT {
             ]
             queryParams.updateValue(market, forKey: "country")
             
-            SPT.shared.call(method: Method.artistAlbums, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.artistAlbums, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -86,7 +86,7 @@ extension SPT {
             var queryParams = [String: String]()
             queryParams.updateValue(market, forKey: "country")
             
-            SPT.shared.call(method: Method.topTracks, pathParam: id, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTTrack>, Error>) in
+            SPT.call(method: Method.topTracks, pathParam: id, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTTrack>, Error>) in
                 switch result {
                 case .success(let root):
                     completion(.success(root.items))
@@ -111,7 +111,7 @@ extension SPT {
             let queryParams = [
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.shared.call(method: Method.severalArtists, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTArtist>, Error>) in
+            SPT.call(method: Method.severalArtists, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTArtist>, Error>) in
                 switch result {
                 case .success(let root):
                     completion(.success(root.items))
@@ -127,7 +127,7 @@ extension SPT {
          */
         public static func getArtistRelatedArtists(id: String, completion: @escaping (Result<[SPTArtist], Error>) -> Void) {
 
-            SPT.shared.call(method: Method.relatedArtists, pathParam: id, queryParams: nil, body: nil) { (result: Result<Nested<SPTArtist>, Error>) in
+            SPT.call(method: Method.relatedArtists, pathParam: id, queryParams: nil, body: nil) { (result: Result<Nested<SPTArtist>, Error>) in
                 switch result {
                 case .success(let root):
                     completion(.success(root.items))

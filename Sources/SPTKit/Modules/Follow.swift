@@ -37,7 +37,7 @@ extension SPT {
                 "type": "artist",
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.shared.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -53,7 +53,7 @@ extension SPT {
                 "type": "user",
                 "ids": ids.joined(separator: ",")
             ]
-            SPT.shared.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         /**
@@ -64,7 +64,7 @@ extension SPT {
          */
         public static func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
             
-            SPT.shared.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
+            SPT.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
         }
         
         private enum Method: SPTMethod {

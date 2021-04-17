@@ -41,7 +41,7 @@ extension SPT {
             ]
             queryParams.updateValue(market, forKey: "market")
             
-            SPT.shared.call(method: Method.search, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+            SPT.call(method: Method.search, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
         }
         
         public static func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
@@ -55,20 +55,6 @@ extension SPT {
             
             search(query: query, types: types, limit: limit, offset: offset, completion: completion)
         }
-        
-//        private class func forgeRequest(queryParams: [String: String]?) -> URLRequest? {
-//            
-//            guard let token = SPT.authorizationToken, !token.isEmpty else {
-//                print("*** Authorization token cannot be empty ***")
-//                return nil
-//            }
-//            let header = HTTPHeader(name: "Authorization", value: "Bearer " + token)
-//            guard let url = Method.search.composed(pathParam: nil, queryParams: queryParams),
-//                let request = try? URLRequest(url: url, method: .get, headers: HTTPHeaders(arrayLiteral: header)) else {
-//                    return nil
-//            }
-//            return request
-//        }
         
         private enum Method: SPTMethod {
             case search
