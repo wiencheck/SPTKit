@@ -23,13 +23,13 @@ extension SPT {
     /**
      Endpoints for retrieving information about a user’s profile.
      */
-    public enum Users {
+    public class Users {
         /**
          Add the current user as a follower of a playlist.
          - Parameters:
             - completion: Handler called after completing the request.
          */
-        public static func getCurrentUser(completion: @escaping (Result<SPTPrivateUser, Error>) -> Void) {
+        public class func getCurrentUser(completion: @escaping (Result<SPTPrivateUser, Error>) -> Void) {
             
             SPT.call(method: Method.getCurrentUser, pathParam: nil, queryParams: nil, body: nil, completion: completion)
         }
@@ -40,7 +40,7 @@ extension SPT {
             - identifier: The user’s [Spotify user ID](https://developer.spotify.com/documentation/web-api/#spotify-uris-and-ids).
             - completion: Handler called after completing the request.
          */
-        public static func getUser(identifier: String, completion: @escaping (Result<SPTPublicUser, Error>) -> Void) {
+        public class func getUser(identifier: String, completion: @escaping (Result<SPTPublicUser, Error>) -> Void) {
             
             SPT.call(method: Method.getUser, pathParam: identifier, queryParams: nil, body: nil, completion: completion)
         }
@@ -58,5 +58,7 @@ extension SPT {
                 }
             }
         }
+        
+        private init() {}
     }
 }

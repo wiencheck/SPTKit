@@ -19,7 +19,7 @@
 import Foundation
 
 extension Dictionary {
-    mutating func updateValue(_ value: Value?, forKey key: Key) {
+    mutating func updateValueIfExists(_ value: Value?, forKey key: Key) {
         if self[key] == nil && value == nil {
             return
         }

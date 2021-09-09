@@ -20,6 +20,7 @@ import Foundation
 import SPTKitModels
 
 final class SPTJSONDecoder: JSONDecoder {
+    
     override init() {
         super.init()
         dateDecodingStrategy = .iso8601

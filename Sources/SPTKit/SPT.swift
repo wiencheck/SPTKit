@@ -20,7 +20,7 @@
 import Foundation
 import SPTKitModels
 
-public struct SPT {
+public class SPT {
     /**
      Shared instance.
      */
@@ -41,7 +41,7 @@ public struct SPT {
      */
     public static var countryCode: String? = Locale.current.regionCode
     
-    private static var session: URLSession {
+    private class var session: URLSession {
         return URLSession.shared
     }
     
@@ -50,7 +50,7 @@ public struct SPT {
 
 // MARK: Internal methods
 extension SPT {
-    static func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    class func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion(.failure(SPTError.badRequest))
@@ -59,7 +59,7 @@ extension SPT {
         perform(request: request, completion: completion)
     }
     
-    static func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
+    class func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
         
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion?(SPTError.badRequest)
@@ -69,7 +69,7 @@ extension SPT {
     }
     
     // MARK: Private stuff
-    static func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    class func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
         session.dataTask(with: request) { data, response, error in
             // Check for any connection errors
@@ -104,7 +104,7 @@ extension SPT {
         }.resume()
     }
     
-    internal static func perform(request: URLRequest, completion: ((Error?) -> Void)?) {
+    class func perform(request: URLRequest, completion: ((Error?) -> Void)?) {
         
         session.dataTask(with: request) { data, response, error in
             // Check any connection errors
@@ -135,7 +135,7 @@ extension SPT {
         }.resume()
     }
     
-    private static func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
+    private class func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
         
         guard let token = SPT.authorizationToken, !token.isEmpty else {
             print("*** Authorization token cannot be empty ***")

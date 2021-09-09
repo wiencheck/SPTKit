@@ -23,7 +23,7 @@ extension SPT {
     /**
      Endpoints for managing the artists, users, and playlists that a Spotify user follows.
      */
-    public enum Follow {
+    public class Follow {
         /**
          Add the current user as a follower of one or more artists.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
@@ -31,7 +31,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public static func followArtists(ids: [String], completion: ((Error?) -> Void)?) {
+        public class func followArtists(ids: [String], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "type": "artist",
@@ -47,7 +47,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public static func followUsers(ids: [String], completion: ((Error?) -> Void)?) {
+        public class func followUsers(ids: [String], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "type": "user",
@@ -62,7 +62,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public static func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
+        public class func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
             
             SPT.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
         }
@@ -94,5 +94,7 @@ extension SPT {
                 }
             }
         }
+        
+        private init() {}
     }
 }

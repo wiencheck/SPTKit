@@ -24,15 +24,15 @@ extension SPT {
     /**
      Endpoints for retrieving information about a user’s playlists and for managing a user’s playlists.
      */
-    public enum Playlists {
+    public class Playlists {
         /**
          Get a playlist owned by a Spotify user.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
          */
-        public static func getPlaylist(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
+        public class func getPlaylist(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
             
             var queryParams = [String: String]()
-            queryParams.updateValue(market, forKey: "market")
+            queryParams.updateValueIfExists(market, forKey: "market")
             
             SPT.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
@@ -41,13 +41,13 @@ extension SPT {
          Get full details of the tracks or episodes of a playlist owned by a Spotify user.
          [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlists-tracks/)
          */
-        public static func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTPlaylistTrack>, Error>) -> Void) {
+        public class func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTPlaylistTrack>, Error>) -> Void) {
             
             var queryParams = [
                 "limit": String(limit),
                 "offset": String(offset)
             ]
-            queryParams.updateValue(market, forKey: "market")
+            queryParams.updateValueIfExists(market, forKey: "market")
             
             SPT.call(method: Method.getPlaylistTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
@@ -61,13 +61,13 @@ extension SPT {
             - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
             - completion: Handler called after completing the request.
          */
-        public static func addTracksToPlaylist(id: String, uris: [String], position: Int?, completion: ((Error?) -> Void)?) {
+        public class func addTracksToPlaylist(id: String, uris: [String], position: Int?, completion: ((Error?) -> Void)?) {
             
             var queryParams = [
                 "uris": uris.joined(separator: ",")
             ]
             if let position = position {
-                queryParams.updateValue(String(position), forKey: "position")
+                queryParams.updateValueIfExists(String(position), forKey: "position")
             }
             let values = uris.map { uri in
                 ["uri": uri]
@@ -86,7 +86,7 @@ extension SPT {
             - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
             - completion: Handler called after completing the request.
          */
-        public static func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]], completion: ((Error?) -> Void)?) {
+        public class func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "uris": uris.joined(separator: ",")
@@ -94,7 +94,7 @@ extension SPT {
             let values = uris.enumerated().map { (idx: Int, uri: String) -> [String: Any] in
                 var value: [String: Any] = ["uri": uri]
                 if !positions.isEmpty {
-                    value.updateValue(positions[idx], forKey: "positions")
+                    value.updateValueIfExists(positions[idx], forKey: "positions")
                 }
                 return value
             }
@@ -145,5 +145,7 @@ extension SPT {
                 }
             }
         }
+        
+        private init() {}
     }
 }

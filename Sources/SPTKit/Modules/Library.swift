@@ -24,7 +24,7 @@ extension SPT {
     /**
      Endpoints for retrieving information about, and managing, tracks that the current user has saved in their “Your Music” library.
      */
-    public enum Library {
+    public class Library {
         
         /**
          Get a list of the albums saved in the current Spotify user’s ‘Your Music’ library.
@@ -35,7 +35,7 @@ extension SPT {
             - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedAlbum>, Error>) -> Void) {
+        public class func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedAlbum>, Error>) -> Void) {
             
             var queryParams = [
                 "limit": String(limit),
@@ -56,7 +56,7 @@ extension SPT {
             - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public static func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedTrack>, Error>) -> Void) {
+        public class func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedTrack>, Error>) -> Void) {
             
             var queryParams = [
                 "limit": String(limit),
@@ -76,7 +76,7 @@ extension SPT {
             - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public static func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedPlaylist>, Error>) -> Void) {
+        public class func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedPlaylist>, Error>) -> Void) {
             
             let queryParams = [
                 "limit": String(limit),
@@ -91,7 +91,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public static func saveTracks(ids: [String], completion: ((Error?) -> Void)?) {
+        public class func saveTracks(ids: [String], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "ids": ids.joined(separator: ",")
@@ -106,7 +106,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public static func saveAlbums(ids: [String], completion: ((Error?) -> Void)?) {
+        public class func saveAlbums(ids: [String], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "ids": ids.joined(separator: ",")
@@ -121,7 +121,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether album is saved.
          */
-        public static func checkSavedAlbums(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
+        public class func checkSavedAlbums(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
             
             let queryParams = [
                 "ids": ids.joined(separator: ",")
@@ -144,7 +144,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether track is saved.
          */
-        public static func checkSavedTracks(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
+        public class func checkSavedTracks(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
             
             let queryParams = [
                 "ids": ids.joined(separator: ",")
@@ -167,7 +167,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public static func removeSavedTracks(ids: [String], completion: ((Error?) -> Void)?) {
+        public class func removeSavedTracks(ids: [String], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "ids": ids.joined(separator: ",")
@@ -181,7 +181,7 @@ extension SPT {
             - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
             - completion: Handler called after completing the request.
          */
-        public static func removeSavedAlbums(ids: [String], completion: ((Error?) -> Void)?) {
+        public class func removeSavedAlbums(ids: [String], completion: ((Error?) -> Void)?) {
             
             let queryParams = [
                 "ids": ids.joined(separator: ",")
@@ -224,5 +224,7 @@ extension SPT {
                 }
             }
         }
+        
+        private init() {}
     }
 }

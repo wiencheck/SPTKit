@@ -24,26 +24,26 @@ extension SPT {
     /**
      Endpoints for retrieving information about one or more tracks from the Spotify catalog.
      */
-    public enum Tracks {
+    public class Tracks {
         /**
          Get Spotify catalog information for a single track identified by its unique Spotify ID.
          */
-        public static func getTrack(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTTrack, Error>) -> Void) {
+        public class func getTrack(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTTrack, Error>) -> Void) {
             
             var queryParams = [String: String]()
-            queryParams.updateValue(market, forKey: "market")
+            queryParams.updateValueIfExists(market, forKey: "market")
             
             SPT.call(method: Method.severalTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
         }
         /**
          Get Spotify catalog information for multiple tracks based on their Spotify IDs.
          */
-        public static func getSeveralTracks(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
+        public class func getSeveralTracks(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
             
             var queryParams = [
                 "ids": ids.joined(separator: ",")
             ]
-            queryParams.updateValue(market, forKey: "market")
+            queryParams.updateValueIfExists(market, forKey: "market")
             
             SPT.call(method: Method.severalTracks, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTTrack>, Error>) in
                 switch result {
@@ -62,5 +62,7 @@ extension SPT {
                 return "tracks"
             }
         }
+        
+        private init() {}
     }
 }
