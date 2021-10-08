@@ -16,7 +16,7 @@ let package = Package(
             targets: ["SPTKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/wiencheck/SPTKitModels", from: "1.0.0")
+        .package(name: "SPTKitModels", url: "https://github.com/wiencheck/SPTKitModels", .branch("GRDB"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

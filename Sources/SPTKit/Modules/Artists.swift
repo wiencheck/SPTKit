@@ -52,7 +52,7 @@ extension SPT {
             - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
             - completion: Handler called on success or failure.
         */
-        public class func getArtistAlbums(id: String, groups: [SPTSimplifiedAlbum.AlbumGroup] = SPTSimplifiedAlbum.AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedAlbum>, Error>) -> Void) {
+        public class func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTAlbum>, Error>) -> Void) {
             if groups.isEmpty {
                 let error = SPTError.albumGroupsEmpty
                 completion(.failure(error))

@@ -20,7 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2B0AB9F72575001E003F148D /* SPTKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SPTKit; path = ../..; sourceTree = "<group>"; };
+		2B0AB9F72575001E003F148D /* SPTKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SPTKit; path = ..; sourceTree = "<group>"; };
 		2B15D500251624DD008EE882 /* SPTKitExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SPTKitExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B15D503251624DD008EE882 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2B15D505251624DD008EE882 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -51,6 +51,7 @@
 		2B15D4F7251624DD008EE882 = {
 			isa = PBXGroup;
 			children = (
+				2B0AB9F72575001E003F148D /* SPTKit */,
 				2B15D502251624DD008EE882 /* SPTKitExample */,
 				2B15D501251624DD008EE882 /* Products */,
 				2B15D51825162528008EE882 /* Frameworks */,
@@ -68,7 +69,6 @@
 		2B15D502251624DD008EE882 /* SPTKitExample */ = {
 			isa = PBXGroup;
 			children = (
-				2B0AB9F72575001E003F148D /* SPTKit */,
 				2B15D503251624DD008EE882 /* AppDelegate.swift */,
 				2B15D505251624DD008EE882 /* SceneDelegate.swift */,
 				2B15D507251624DD008EE882 /* ViewController.swift */,

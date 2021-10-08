@@ -76,7 +76,7 @@ extension SPT {
             - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public class func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedPlaylist>, Error>) -> Void) {
+        public class func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTPlaylist>, Error>) -> Void) {
             
             let queryParams = [
                 "limit": String(limit),

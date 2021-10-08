@@ -53,7 +53,7 @@ extension SPT {
             - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
             - completion: Handler containing decoded objects, called after completing the request.
          */
-        public class func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedTrack>, Error>) -> Void) {
+        public class func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTTrack>, Error>) -> Void) {
 
             var queryParams = [
                 "limit": String(limit),
