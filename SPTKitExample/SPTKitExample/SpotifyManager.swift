@@ -12,7 +12,7 @@ final class SpotifyManager: NSObject {
     
     private let sessionManager: SPTSessionManager
     
-    private var sessionUrlObserver: Any!
+    private var sessionURLObserver: Any!
     
     private var loginHandler: ((Result<String, Error>) -> Void)?
     
@@ -25,13 +25,13 @@ final class SpotifyManager: NSObject {
     
     func login(completion: ((Result<String, Error>) -> Void)?) {
         loginHandler = completion
-        observeSessionUrl()
+        observeSessionURL()
         sessionManager.initiateSession(with: scopes, options: .default)
     }
     
-    private func observeSessionUrl() {
-        guard sessionUrlObserver == nil else { return }
-        sessionUrlObserver = NotificationCenter.default.addObserver(forName: Notifications.applicationReceivedURL, object: nil, queue: nil, using: { sender in
+    private func observeSessionURL() {
+        guard sessionURLObserver == nil else { return }
+        sessionURLObserver = NotificationCenter.default.addObserver(forName: Notifications.applicationReceivedURL, object: nil, queue: nil, using: { sender in
             guard let userInfo = sender.userInfo, let application = userInfo["app"] as? UIApplication, let url = userInfo["url"] as? URL, let options = userInfo["options"] as? [UIApplication.OpenURLOptionsKey: Any] else {
                 return
             }

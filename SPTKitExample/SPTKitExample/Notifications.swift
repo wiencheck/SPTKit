@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 enum Notifications {
     static let loginStatusDidChangeNotification = Notification.Name(rawValue: "loginStatusDidChangeNotification")
     
