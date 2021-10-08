@@ -8,7 +8,6 @@
 
 import UIKit
 import SPTKit
-import SPTKitModels
 
 class ViewController: UIViewController {
     
