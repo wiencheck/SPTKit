@@ -18,29 +18,30 @@
 
 import Foundation
 
-/// Full Track object.
-public class SPTTrack: SPTSimplifiedTrack, SPTTrackProtocol {
+/// Saved Album object containing reference to the full Album object.
+public class SPTSavedAlbum: Codable {
+    /**
+     The date and time the album was saved.
+     */
+    public let addedDate: Date
     
-    public let album: SPTSimplifiedAlbum
-    
-    public let popularity: Int
+    /**
+     Information about the album.
+     */
+    public let album: SPTAlbum
     
     // MARK: Codable stuff
     private enum CodingKeys: String, CodingKey {
-        case album, popularity
+        case addedDate = "added_at"
+        case album
     }
-    
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        album = try container.decode(SPTSimplifiedAlbum.self, forKey: .album)
-        popularity = try container.decode(Int.self, forKey: .popularity)
-        try super.init(from: decoder)
-    }
+}
 
-    public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(album, forKey: .album)
-        try container.encode(popularity, forKey: .popularity)
-        try super.encode(to: encoder)
+extension SPTSavedAlbum: CustomStringConvertible {
+    public var description: String {
+        return """
+            Added at: \(addedDate)
+            \(album)
+        """
     }
 }

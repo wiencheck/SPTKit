@@ -18,28 +18,53 @@
 
 import Foundation
 
-/// Full Playlist object.
-public class SPTPlaylist: SPTSimplifiedPlaylist, SPTPlaylistProtocol {
+public class SPTBaseObject: Codable {
+    /**
+     The object type.
+     */
+    public let type: SPTObjectType
     
-    public let followers: SPTFollowers
+    /**
+     The Spotify URI for the object.
+     */
+    public let uri: String
+    
+    /**
+     The Spotify ID for the object.
+     */
+    public let id: String
+    
+    /**
+     A link to the Web API endpoint providing full details of the object.
+     */
+    public let url: URL
+    
+    /**
+     Known external URLs for this object.
+     */
+    public let externalURLs: [String: URL]
     
     // MARK: Codable stuff
     private enum CodingKeys: String, CodingKey {
-        case followers
+        case type, uri, id
+        case url = "href"
+        case externalURLs = "external_urls"
     }
-
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        followers = try container.decode(SPTFollowers.self, forKey: .followers)
-        
-        try super.init(from: decoder)
+    
+    // MARK: `CustomStringConvertible` conformance
+    public var description: String {
+        return """
+            \(type), id: \(id)
+        """
     }
-
-    public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(followers, forKey: .followers)
-        
-        try super.encode(to: encoder)
+    
+    // MARK: `Equatable` conformance
+    public static func == (lhs: SPTBaseObject, rhs: SPTBaseObject) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    // MARK: `Hashable` conformance
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(uri)
     }
 }

@@ -19,16 +19,31 @@
 import Foundation
 
 /// Full Album object.
-public class SPTAlbum: SPTSimplifiedAlbum, SPTAlbumProtocol {
+public class SPTAlbum: SPTSimplifiedAlbum {
     
+    /**
+     The copyright statements of the album.
+     */
     public let copyrights: [SPTCopyright]
     
+    /**
+     A list of the genres used to classify the album. For example: "Prog Rock" , "Post-Grunge". (If not yet classified, the array is empty.)
+     */
     public let genres: [String]
     
+    /**
+     The label for the album.
+     */
     public let label: String
     
+    /**
+     The popularity of the album. The value will be between 0 and 100, with 100 being the most popular. The popularity is calculated from the popularity of the album’s individual tracks.
+     */
     public let popularity: Int
     
+    /**
+     The tracks of the album.
+     */
     public let tracks: SPTPagingObject<SPTSimplifiedTrack>
     
     // MARK: Codable stuff

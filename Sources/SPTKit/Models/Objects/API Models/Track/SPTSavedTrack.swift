@@ -18,30 +18,30 @@
 
 import Foundation
 
-/// Playlist track object
-public class SPTPlaylistTrack: SPTPlaylistTrackProtocol, Encodable {
+/// Saved Track object containing reference to the full Track object.
+public class SPTSavedTrack: Codable {
+    /**
+     The date and time the track was saved.
+     */
+    public let addedDate: Date
     
-    public let addedDate: Date?
-    
-    public let addedBy: SPTPublicUser?
-    
-    public let isLocal: Bool
-    
+    /**
+     Information about the track.
+     */
     public let track: SPTTrack
     
     // MARK: Codable stuff
     private enum CodingKeys: String, CodingKey {
         case track
         case addedDate = "added_at"
-        case addedBy = "added_by"
-        case isLocal = "is_local"
     }
 }
 
-extension SPTPlaylistTrack: CustomStringConvertible {
+extension SPTSavedTrack: CustomStringConvertible {
     public var description: String {
         return """
-        PlaylistTrack: \(track.name)
+            Added at: \(addedDate)
+            \(track)
         """
     }
 }

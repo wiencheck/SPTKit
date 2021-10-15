@@ -18,25 +18,41 @@
 
 import Foundation
 
-/// Saved Track object containing reference to the full Track object.
-public class SPTSavedTrack: SPTSavedTrackProtocol, Encodable {
+/// Playlist track object
+public class SPTPlaylistTrack: Codable {
+    /**
+     The date and time the track was added. Note that some very old playlists may return null in this field.
+     */
+    public let addedDate: Date?
     
-    public let addedDate: Date
+    /**
+     The Spotify user who added the track. Note that some very old playlists may return null in this field.
+     */
+    public let addedBy: SPTPublicUser?
     
+    /**
+     Whether this track is a local file or not.
+     */
+    public let isLocal: Bool
+    
+    /**
+     Information about the track.
+     */
     public let track: SPTTrack
     
     // MARK: Codable stuff
     private enum CodingKeys: String, CodingKey {
         case track
         case addedDate = "added_at"
+        case addedBy = "added_by"
+        case isLocal = "is_local"
     }
 }
 
-extension SPTSavedTrack: CustomStringConvertible {
+extension SPTPlaylistTrack: CustomStringConvertible {
     public var description: String {
         return """
-            Added at: \(addedDate)
-            \(track)
+        PlaylistTrack: \(track.name)
         """
     }
 }

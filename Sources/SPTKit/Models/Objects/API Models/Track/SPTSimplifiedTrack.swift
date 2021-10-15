@@ -19,27 +19,60 @@
 import Foundation
 
 /// Simplified Track object.
-public class SPTSimplifiedTrack: SPTBaseObject, SPTSimplifiedTrackProtocol {
+public class SPTSimplifiedTrack: SPTBaseObject {
+    /**
+     The name of this track.
+     */
     public let name: String
-
+    
+    /**
+     The artists who performed the track.
+     */
     public let artists: [SPTSimplifiedArtist]
     
+    /**
+     A list of the countries in which the track can be played, identified by their ISO 3166-1 alpha-2 code.
+     */
     public let availableMarkets: [String]
     
+    /**
+     The disc number (usually 1 unless the album consists of more than one disc).
+     */
     public let discNumber: Int
     
+    /**
+     The track length in milliseconds.
+     */
     public let durationMs: Int
     
+    /**
+     Whether or not the track has explicit lyrics ( true = yes it does; false = no it does not OR unknown).
+     */
     public let isExplicit: Bool
     
+    /**
+     Part of the response when Track Relinking is applied. If true, the track is playable in the given market. Otherwise false.
+     */
     public let isPlayable: Bool
     
+    /**
+     Part of the response when Track Relinking is applied, and the requested track has been replaced with different track. The track in the linked_from object contains information about the originally requested track.
+     */
     public let linkedFrom: SPTLinkedTrack?
     
+    /**
+     A link to a 30 second preview (MP3 format) of the track. Can be null
+    */
     public let previewUrl: URL?
     
+    /**
+     The number of the track. If an album has several discs, the track number is the number on the specified disc.
+     */
     public let trackNumber: Int
     
+    /**
+     Whether or not the track is from a local file.
+     */
     public let isLocal: Bool
     
     public override var description: String {
@@ -92,5 +125,11 @@ public class SPTSimplifiedTrack: SPTBaseObject, SPTSimplifiedTrackProtocol {
         try container.encode(trackNumber, forKey: .trackNumber)
         try container.encode(isLocal, forKey: .isLocal)
         try super.encode(to: encoder)
+    }
+}
+
+extension SPTSimplifiedTrack: Nestable {
+    public static var pluralKey: String {
+        return "tracks"
     }
 }

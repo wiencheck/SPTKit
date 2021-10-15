@@ -19,22 +19,46 @@
 import Foundation
 
 /// Simplified Playlist object.
-public class SPTSimplifiedPlaylist: SPTBaseObject, SPTSimplifiedPlaylistProtocol {
-    
+public class SPTSimplifiedPlaylist: SPTBaseObject {
+    /**
+     true if the owner allows other users to modify the playlist.
+     */
     public let isCollaborative: Bool
     
+    /**
+     The playlist description. Only returned for modified, verified playlists, otherwise null .
+     */
     public let descriptionText: String?
     
+    /**
+     Images for the playlist. The array may be empty or contain up to three images. The images are returned by size in descending order. See Working with Playlists.
+     Note: If returned, the source URL for the image ( url ) is temporary and will expire in less than a day.
+     */
     public let images: [SPTImage]
     
+    /**
+     The name of the playlist.
+     */
     public let name: String
     
+    /**
+     The user who owns the playlist
+     */
     public let owner: SPTPublicUser
     
+    /**
+     The playlist’s public/private status: true the playlist is public, false the playlist is private, null the playlist status is not relevant. For more about public/private status, see [Working with Playlists](https://developer.spotify.com/documentation/general/guides/working-with-playlists/).
+     */
     public let isPublic: Bool?
     
+    /**
+     The version identifier for the current playlist. Can be supplied in other requests to target a specific playlist version.
+     */
     public let snapshotId: String
     
+    /**
+     Number of tracks in the playlist.
+     */
     public let total: Int
     
     public override var description: String {
@@ -85,5 +109,11 @@ public class SPTSimplifiedPlaylist: SPTBaseObject, SPTSimplifiedPlaylistProtocol
         try container.encode(isPublic, forKey: .isPublic)
         
         try super.encode(to: encoder)
+    }
+}
+
+extension SPTSimplifiedPlaylist: Nestable {
+    public static var pluralKey: String {
+        return "playlists"
     }
 }
