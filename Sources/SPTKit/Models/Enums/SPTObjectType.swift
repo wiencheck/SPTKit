@@ -18,21 +18,65 @@
 
 import Foundation
 public enum SPTObjectType: String, Codable, CaseIterable {
-    case album, artist, playlist, track, show, episode, user
+    /**
+     Type associated with album objects.
+     
+     Eligible for search.
+     */
+    case album
     
-    public static var searchTypes: [SPTObjectType] {
-        return [.album, .artist, .playlist, .track, .show, .episode]
+    /**
+     Type associated with album objects.
+     
+     Eligible for search.
+     */
+    case artist
+    
+    /**
+     Type associated with album objects.
+     
+     Eligible for search.
+     */
+    case playlist
+    
+    /**
+     Type associated with album objects.
+     
+     Eligible for search.
+     */
+    case track
+    
+    /**
+     Type associated with album objects.
+     
+     Eligible for search.
+     */
+    case show
+    
+    /**
+     Type associated with album objects.
+     
+     Eligible for search.
+     */
+    case episode
+    
+    /**
+     Type associated with album objects.
+     
+     - Warning: Not eligible for search.
+     */
+    case user
+    
+    public var isEligibleForSearch: Bool {
+        switch self {
+        case .album, .artist, .playlist, .track, .show, .episode:
+            return true
+        default:
+            return false
+        }
     }
     
-    public var pluralKey: String {
-        switch self {
-        case .album:    return "albums"
-        case .artist:    return "artists"
-        case .playlist:    return "playlists"
-        case .track:    return "tracks"
-        case .show:    return "shows"
-        case .episode:    return "episodes"
-        case .user:    return "users"
-        }
+    public static var searchTypes: [SPTObjectType] {
+        SPTObjectType.allCases.filter(\.isEligibleForSearch)
     }
 }

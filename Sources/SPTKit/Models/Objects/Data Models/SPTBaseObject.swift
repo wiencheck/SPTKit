@@ -19,7 +19,7 @@
 import Foundation
 import GRDB
 
-public class SPTBaseObject: SPTBaseObjectProtocol, Encodable, GRDBRecord {
+public class SPTBaseObject: Codable, GRDBRecord {
     /**
      The object type.
      */

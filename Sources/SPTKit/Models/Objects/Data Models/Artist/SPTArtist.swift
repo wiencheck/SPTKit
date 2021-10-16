@@ -20,16 +20,38 @@ import Foundation
 import GRDB
 
 /// Full Artist object.
-public class SPTArtist: SPTBaseObject, SPTArtistProtocol {
-    
+public class SPTArtist: SPTBaseObject {
+    /**
+     The name of this artist.
+     */
     public let name: String
-
+    
+    /**
+     Information about the followers of the artist.
+     
+     - Warning: This value is always `nil` in simplified objects.
+     */
     public let followers: SPTFollowers?
     
+    /**
+     A list of the genres the artist is associated with. For example: "Prog Rock" , "Post-Grunge". (If not yet classified, the array is empty.)
+     
+     - Warning: This value is always `nil` in simplified objects.
+     */
     public let genres: [String]?
-
+    
+    /**
+     Images of the artist in various sizes, widest first.
+     
+     - Warning: This value is always `nil` in simplified objects.
+     */
     public let images: [SPTImage]?
     
+    /**
+     The popularity of the artist. The value will be between 0 and 100, with 100 being the most popular. The artist’s popularity is calculated from the popularity of all the artist’s tracks.
+     
+     - Warning: This value is always `nil` in simplified objects.
+     */
     public let popularity: Int?
     
     public override var description: String {
@@ -72,41 +94,8 @@ public class SPTArtist: SPTBaseObject, SPTArtistProtocol {
     public override class var databaseTableName: String { "artist" }
 }
 
-/*
- Sample response
- 
- {
-   "external_urls" : {
-     "spotify" : "https://open.spotify.com/artist/0OdUWJ0sBjDrqHygGUXeCF"
-   },
-   "followers" : {
-     "href" : null,
-     "total" : 306565
-   },
-   "genres" : [ "indie folk", "indie pop" ],
-   "href" : "https://api.spotify.com/v1/artists/0OdUWJ0sBjDrqHygGUXeCF",
-   "id" : "0OdUWJ0sBjDrqHygGUXeCF",
-   "images" : [ {
-     "height" : 816,
-     "url" : "https://i.scdn.co/image/eb266625dab075341e8c4378a177a27370f91903",
-     "width" : 1000
-   }, {
-     "height" : 522,
-     "url" : "https://i.scdn.co/image/2f91c3cace3c5a6a48f3d0e2fd21364d4911b332",
-     "width" : 640
-   }, {
-     "height" : 163,
-     "url" : "https://i.scdn.co/image/2efc93d7ee88435116093274980f04ebceb7b527",
-     "width" : 200
-   }, {
-     "height" : 52,
-     "url" : "https://i.scdn.co/image/4f25297750dfa4051195c36809a9049f6b841a23",
-     "width" : 64
-   } ],
-   "name" : "Band of Horses",
-   "popularity" : 59,
-   "type" : "artist",
-   "uri" : "spotify:artist:0OdUWJ0sBjDrqHygGUXeCF"
- }
- 
- */
+extension SPTArtist: Nestable {
+    static var pluralKey: String {
+        return "artists"
+    }
+}

@@ -20,10 +20,6 @@
 import Foundation
 
 public class SPT {
-    /**
-     Shared instance.
-     */
-    //internal static let shared = SPT()
     
     /**
      A valid access token from the Spotify Accounts service. This library does not take the responsibility of authentication. You have to implement it by yourself. [Read more](https://developer.spotify.com/documentation/general/guides/authorization-guide/)

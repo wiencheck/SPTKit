@@ -20,10 +20,15 @@ import Foundation
 import GRDB
 
 /// Saved Track object containing reference to the full Track object.
-public class SPTSavedTrack: SPTSavedTrackProtocol, Encodable {
-    
+public class SPTSavedTrack: Codable {
+    /**
+     The date and time the track was saved.
+     */
     public let addedDate: Date
     
+    /**
+     Information about the track.
+     */
     public let track: SPTTrack
     
     // MARK: Codable stuff

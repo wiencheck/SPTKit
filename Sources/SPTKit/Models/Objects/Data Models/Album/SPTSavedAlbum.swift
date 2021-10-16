@@ -20,7 +20,7 @@ import Foundation
 import GRDB
 
 /// Saved Album object containing reference to the full Album object.
-public class SPTSavedAlbum: SPTSavedAlbumProtocol, Encodable {
+public class SPTSavedAlbum: Codable {
     /**
      The date and time the album was saved.
      */
