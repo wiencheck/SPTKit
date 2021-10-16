@@ -50,7 +50,7 @@ public class SPTSimplifiedArtist: SPTBaseObject {
 }
 
 extension SPTSimplifiedArtist: Nestable {
-    public static var pluralKey: String {
+    static var pluralKey: String {
         return "artists"
     }
 }

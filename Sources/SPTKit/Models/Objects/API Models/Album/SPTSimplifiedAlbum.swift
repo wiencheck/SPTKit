@@ -115,7 +115,7 @@ public class SPTSimplifiedAlbum: SPTBaseObject {
 }
 
 extension SPTSimplifiedAlbum: Nestable {
-    public static var pluralKey: String {
+    static var pluralKey: String {
         return "albums"
     }
 }

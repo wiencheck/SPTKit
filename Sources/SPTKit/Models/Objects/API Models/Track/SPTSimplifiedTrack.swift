@@ -129,7 +129,7 @@ public class SPTSimplifiedTrack: SPTBaseObject {
 }
 
 extension SPTSimplifiedTrack: Nestable {
-    public static var pluralKey: String {
+    static var pluralKey: String {
         return "tracks"
     }
 }

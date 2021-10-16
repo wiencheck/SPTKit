@@ -33,7 +33,7 @@ public struct SPTDevice: Codable {
 }
 
 extension SPTDevice: Nestable {
-    public static var pluralKey: String {
+    static var pluralKey: String {
         return "devices"
     }
 }

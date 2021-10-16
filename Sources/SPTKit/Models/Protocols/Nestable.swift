@@ -18,12 +18,12 @@
 
 import Foundation
 
-public protocol Nestable: Decodable {
+protocol Nestable: Decodable {
     static var pluralKey: String { get }
 }
 
-public class Nested<T>: Decodable where T: Nestable {
-    public let items: [T]
+final class Nested<T>: Decodable where T: Nestable {
+    let items: [T]
 
     private struct CodingKeys: CodingKey {
         var stringValue: String
@@ -36,7 +36,7 @@ public class Nested<T>: Decodable where T: Nestable {
         }
     }
 
-    public required init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         guard let codingKey = CodingKeys(stringValue: T.pluralKey) else {
             throw SPTError(status: -1, message: "Couldn't create valid CodingKey")
