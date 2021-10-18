@@ -19,16 +19,20 @@
 
 import Foundation
 
-extension SPTPagingObject {
-    public func getPrevious(completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
-        getPage(url: previous, completion: completion)
+fileprivate extension SPTPagingObject {
+    func forgeRequest(url: URL, method: HTTPMethod) -> URLRequest? {
+        guard let token = SPT.authorizationToken, !token.isEmpty else {
+            print("*** Authorization token cannot be empty ***")
+            return nil
+        }
+        return URLRequest(url: url, method: method, headers: [
+            "Authorization": "Bearer " + token
+        ])
     }
-    
-    public func getNext(completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
-        getPage(url: next, completion: completion)
-    }
-    
-    private func getPage(url: URL?, completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
+}
+
+fileprivate extension SPTPagingObject {
+    func getPage(url: URL?, completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
         
         guard let url = url,
             let request = forgeRequest(url: url, method: .get) else {
@@ -37,14 +41,39 @@ extension SPTPagingObject {
         }
         SPT.perform(request: request, completion: completion)
     }
+}
+
+public extension SPTPagingObject {
+    func getPrevious(completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
+        getPage(url: previous, completion: completion)
+    }
     
-    private func forgeRequest(url: URL, method: HTTPMethod) -> URLRequest? {
-        guard let token = SPT.authorizationToken, !token.isEmpty else {
-            print("*** Authorization token cannot be empty ***")
-            return nil
+    func getNext(completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
+        getPage(url: next, completion: completion)
+    }
+}
+
+// - MARK: Async/Await support.
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+fileprivate extension SPTPagingObject {
+    func getPage(url: URL?) async throws -> SPTPagingObject<T> {
+        
+        guard let url = url,
+            let request = forgeRequest(url: url, method: .get) else {
+                throw(SPTError.badRequest)
         }
-        return URLRequest(url: url, method: method, headers: [
-            "Authorization": "Bearer " + token
-        ])
+        return try await SPT.perform(request: request)
+    }
+}
+
+// - MARK: Async/Await support.
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+public extension SPTPagingObject {
+    func getPrevious() async throws -> SPTPagingObject<T> {
+        try await getPage(url: previous)
+    }
+    
+    func getNext() async throws -> SPTPagingObject<T> {
+        try await getPage(url: next)
     }
 }

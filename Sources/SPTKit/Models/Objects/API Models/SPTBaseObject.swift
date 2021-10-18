@@ -57,14 +57,21 @@ public class SPTBaseObject: Codable {
             \(type), id: \(id)
         """
     }
-    
-    // MARK: `Equatable` conformance
+}
+
+// MARK: `Equatable` conformance
+extension SPTBaseObject: Equatable {
     public static func == (lhs: SPTBaseObject, rhs: SPTBaseObject) -> Bool {
         return lhs.id == rhs.id
     }
-    
-    // MARK: `Hashable` conformance
+}
+
+// MARK: `Hashable` conformance
+extension SPTBaseObject: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(uri)
     }
 }
+
+@available (swift 5.1)
+extension SPTBaseObject: Identifiable {}

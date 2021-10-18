@@ -22,7 +22,7 @@ protocol Nestable: Decodable {
     static var pluralKey: String { get }
 }
 
-final class Nested<T>: Decodable where T: Nestable {
+struct Nested<T>: Decodable where T: Nestable {
     let items: [T]
 
     private struct CodingKeys: CodingKey {
@@ -36,7 +36,7 @@ final class Nested<T>: Decodable where T: Nestable {
         }
     }
 
-    required init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         guard let codingKey = CodingKeys(stringValue: T.pluralKey) else {
             throw SPTError(status: -1, message: "Couldn't create valid CodingKey")

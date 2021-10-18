@@ -19,7 +19,7 @@
 
 import Foundation
 
-public class SPT {
+public struct SPT {
     
     /**
      A valid access token from the Spotify Accounts service. This library does not take the responsibility of authentication. You have to implement it by yourself. [Read more](https://developer.spotify.com/documentation/general/guides/authorization-guide/)
@@ -36,16 +36,38 @@ public class SPT {
      */
     public static var countryCode: String? = Locale.current.regionCode
     
-    private class var session: URLSession {
+    private static var session: URLSession {
         return URLSession.shared
     }
     
-    private init() {}
+    @available(*, unavailable)
+    init() {}
+    
+    private static func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
+        
+        guard let token = SPT.authorizationToken, !token.isEmpty else {
+            print("*** Authorization token cannot be empty ***")
+            return nil
+        }
+        
+        guard let url = method.composed(pathParam: pathParam, queryParams: queryParams) else {
+            return nil
+        }
+        var request = URLRequest(url: url, method: method.method, headers: [
+            "Authorization": "Bearer " + token
+        ])
+        
+        if let body = body, let data = try? JSONSerialization.data(withJSONObject: body, options: []) {
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = data
+        }
+        return request
+    }
 }
 
 // MARK: Internal methods
 extension SPT {
-    class func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    static func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion(.failure(SPTError.badRequest))
@@ -54,7 +76,7 @@ extension SPT {
         perform(request: request, completion: completion)
     }
     
-    class func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
+    static func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
         
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion?(SPTError.badRequest)
@@ -63,8 +85,7 @@ extension SPT {
         perform(request: request, completion: completion)
     }
     
-    // MARK: Private stuff
-    class func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
+    static func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
         
         session.dataTask(with: request) { data, response, error in
             // Check for any connection errors
@@ -99,7 +120,7 @@ extension SPT {
         }.resume()
     }
     
-    class func perform(request: URLRequest, completion: ((Error?) -> Void)?) {
+    static func perform(request: URLRequest, completion: ((Error?) -> Void)?) {
         
         session.dataTask(with: request) { data, response, error in
             // Check any connection errors
@@ -129,25 +150,49 @@ extension SPT {
             }
         }.resume()
     }
+}
+
+// - MARK: Async/Await support.
+// - MARK: Async/Await support.
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+extension SPT {
+    static func perform<T>(request: URLRequest) async throws -> T where T: Decodable {
+        return try await withCheckedThrowingContinuation { continuation in
+            perform(request: request) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
     
-    private class func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
-        
-        guard let token = SPT.authorizationToken, !token.isEmpty else {
-            print("*** Authorization token cannot be empty ***")
-            return nil
+    static func perform(request: URLRequest) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            perform(request: request) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
         }
+    }
+}
+
+// - MARK: Async/Await support.
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+extension SPT {
+    static func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) async throws -> T where T: Decodable {
         
-        guard let url = method.composed(pathParam: pathParam, queryParams: queryParams) else {
-            return nil
+        guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
+            throw SPTError.badRequest
         }
-        var request = URLRequest(url: url, method: method.method, headers: [
-            "Authorization": "Bearer " + token
-        ])
+        return try await perform(request: request)
+    }
+    
+    static func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) async throws {
         
-        if let body = body, let data = try? JSONSerialization.data(withJSONObject: body, options: []) {
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = data
+        guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
+            throw SPTError.badRequest
         }
-        return request
+        try await perform(request: request)
     }
 }

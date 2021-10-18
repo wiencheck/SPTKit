@@ -17,55 +17,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
-extension SPT {
+public extension SPT {
     /**
      Endpoints for managing the artists, users, and playlists that a Spotify user follows.
      */
-    public class Follow {
-        /**
-         Add the current user as a follower of one or more artists.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request.
-         */
-        public class func followArtists(ids: [String], completion: ((Error?) -> Void)?) {
-            
-            let queryParams = [
-                "type": "artist",
-                "ids": ids.joined(separator: ",")
-            ]
-            SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
-        
-        /**
-         Add the current user as a follower of one or more users.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request.
-         */
-        public class func followUsers(ids: [String], completion: ((Error?) -> Void)?) {
-            
-            let queryParams = [
-                "type": "user",
-                "ids": ids.joined(separator: ",")
-            ]
-            SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
-        
-        /**
-         Add the current user as a follower of a playlist.
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request.
-         */
-        public class func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
-            
-            SPT.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
-        }
-        
+    struct Follow {
         private enum Method: SPTMethod {
             // Read methods
             case isFollowingArtist, isFollowingPlaylist, followedArtists
@@ -93,7 +49,99 @@ extension SPT {
                 }
             }
         }
+    }
+}
+
+public extension SPT.Follow {
+    
+    /**
+     Add the current user as a follower of one or more artists.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func followArtists(ids: [String], completion: ((Error?) -> Void)?) {
         
-        private init() {}
+        let queryParams = [
+            "type": "artist",
+            "ids": ids.joined(separator: ",")
+        ]
+        SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+    
+    /**
+     Add the current user as a follower of one or more users.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func followUsers(ids: [String], completion: ((Error?) -> Void)?) {
+        
+        let queryParams = [
+            "type": "user",
+            "ids": ids.joined(separator: ",")
+        ]
+        SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+    
+    /**
+     Add the current user as a follower of a playlist.
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
+        
+        SPT.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
+    }
+}
+
+// - MARK: Async/Await support.
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+public extension SPT.Follow {
+    
+    /**
+     Add the current user as a follower of one or more artists.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func followArtists(ids: [String]) async throws {
+        
+        let queryParams = [
+            "type": "artist",
+            "ids": ids.joined(separator: ",")
+        ]
+        try await SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    /**
+     Add the current user as a follower of one or more users.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func followUsers(ids: [String]) async throws {
+        
+        let queryParams = [
+            "type": "user",
+            "ids": ids.joined(separator: ",")
+        ]
+        try await SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    /**
+     Add the current user as a follower of a playlist.
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func followPlaylist(id: String) async throws {
+        
+        try await SPT.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil)
     }
 }

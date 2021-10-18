@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class SPTPlayback: Codable {
+public struct SPTPlayback: Codable {
     public let context: Context
     
     public let timestamp: Int

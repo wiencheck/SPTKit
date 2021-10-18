@@ -39,8 +39,4 @@ public class SPTSearchResponse: Codable {
      Simplified playlist objects included in the response, wrapped in paging object.
      */
     public let playlists: SPTPagingObject<SPTSimplifiedPlaylist>?
-    
-//    public let shows: SPTPagingObject<SPTSimplifiedAlbum>?
-//
-//    public let episodes: SPTPagingObject<SPTSimplifiedAlbum>?
 }

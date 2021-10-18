@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class SPTImage: Codable {
+public struct SPTImage: Codable {
     /**
      The image height in pixels. If unknown: 0 or not returned.
      */
@@ -34,7 +34,7 @@ public class SPTImage: Codable {
      */
     public let url: URL
 
-    public required init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         height = try container.decodeIfPresent(Int.self, forKey: .height) ?? 0
         width = try container.decodeIfPresent(Int.self, forKey: .width) ?? 0

@@ -18,9 +18,7 @@
 
 import Foundation
 
-import Foundation
-
-public class SPTCopyright: Codable {
+public struct SPTCopyright: Codable {
     /**
      The copyright text for this object.
      */

@@ -17,8 +17,7 @@
 // THE SOFTWARE.
 
 import Foundation
-
-public class SPTPagingObject<T: Codable>: Codable {
+public struct SPTPagingObject<T: Codable>: Codable {
     /**
      The requested data.
      */
@@ -53,7 +52,7 @@ public class SPTPagingObject<T: Codable>: Codable {
         case items, limit, next, offset, previous, total
     }
 
-    required public init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let throwables = try container.decode([Throwable<T>].self, forKey: .items)

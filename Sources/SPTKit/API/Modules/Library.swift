@@ -19,174 +19,11 @@
 
 import Foundation
 
-extension SPT {
+public extension SPT {
     /**
      Endpoints for retrieving information about, and managing, tracks that the current user has saved in their “Your Music” library.
      */
-    public class Library {
-        
-        /**
-         Get a list of the albums saved in the current Spotify user’s ‘Your Music’ library.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/)
-         - Parameters:
-            - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
-            - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
-            - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
-            - completion: Handler containing decoded objects, called after completing the request.
-         */
-        public class func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedAlbum>, Error>) -> Void) {
-            
-            var queryParams = [
-                "limit": String(limit),
-                "offset": String(offset),
-            ]
-            if let market = market {
-                queryParams["market"] = market
-            }
-            SPT.call(method: Method.savedAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
-        
-        /**
-         Get a list of the songs saved in the current Spotify user’s ‘Your Music’ library.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-tracks/)
-         - Parameters:
-            - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
-            - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
-            - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
-            - completion: Handler containing decoded objects, called after completing the request.
-         */
-        public class func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedTrack>, Error>) -> Void) {
-            
-            var queryParams = [
-                "limit": String(limit),
-                "offset": String(offset),
-            ]
-            if let market = market {
-                queryParams["market"] = market
-            }
-            SPT.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
-        
-        /**
-         Get a list of the playlists owned or followed by the current Spotify user.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-a-list-of-current-users-playlists/)
-         - Parameters:
-            - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
-            - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
-            - completion: Handler containing decoded objects, called after completing the request.
-         */
-        public class func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedPlaylist>, Error>) -> Void) {
-            
-            let queryParams = [
-                "limit": String(limit),
-                "offset": String(offset),
-            ]
-            SPT.call(method: Method.savedPlaylists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
-        
-        /**
-         Save one or more tracks to the current user’s ‘Your Music’ library.
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request.
-         */
-        public class func saveTracks(ids: [String], completion: ((Error?) -> Void)?) {
-            
-            let queryParams = [
-                "ids": ids.joined(separator: ",")
-            ]
-            SPT.call(method: Method.saveTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
-        
-        /**
-         Save one or more albums to the current user’s ‘Your Music’ library.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/library/save-albums-user/)
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request.
-         */
-        public class func saveAlbums(ids: [String], completion: ((Error?) -> Void)?) {
-            
-            let queryParams = [
-                "ids": ids.joined(separator: ",")
-            ]
-            SPT.call(method: Method.saveAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
-        
-        /**
-         Check if one or more albums is already saved in the current Spotify user’s ‘Your Music’ library.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-albums/)
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether album is saved.
-         */
-        public class func checkSavedAlbums(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
-            
-            let queryParams = [
-                "ids": ids.joined(separator: ",")
-            ]
-            SPT.call(method: Method.checkSavedAlbums, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<[Bool], Error>) in
-                switch result {
-                case .success(let values):
-                    let dict = Dictionary(uniqueKeysWithValues: zip(ids, values))
-                    completion(.success(dict))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        }
-        
-        /**
-         Check if one or more tracks is already saved in the current Spotify user’s ‘Your Music’ library.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-tracks/)
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether track is saved.
-         */
-        public class func checkSavedTracks(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
-            
-            let queryParams = [
-                "ids": ids.joined(separator: ",")
-            ]
-            SPT.call(method: Method.checkSavedTracks, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<[Bool], Error>) in
-                switch result {
-                case .success(let values):
-                    let dict = Dictionary(uniqueKeysWithValues: zip(ids, values))
-                    completion(.success(dict))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        }
-        
-        /**
-         Remove one or more tracks from the current user’s ‘Your Music’ library.
-         [Read more](https://developer.spotify.com/documentation/web-api/reference/library/remove-albums-user/)
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request.
-         */
-        public class func removeSavedTracks(ids: [String], completion: ((Error?) -> Void)?) {
-            
-            let queryParams = [
-                "ids": ids.joined(separator: ",")
-            ]
-            SPT.call(method: Method.removeTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
-        
-        /**
-         Remove one or more albums from the current user’s ‘Your Music’ library.
-         - Parameters:
-            - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
-            - completion: Handler called after completing the request.
-         */
-        public class func removeSavedAlbums(ids: [String], completion: ((Error?) -> Void)?) {
-            
-            let queryParams = [
-                "ids": ids.joined(separator: ",")
-            ]
-            SPT.call(method: Method.removeAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-        }
+    struct Library {
         
         private enum Method: SPTMethod {
             // Read methods
@@ -223,7 +60,323 @@ extension SPT {
                 }
             }
         }
+    }
+}
+
+public extension SPT.Library {
+    /**
+     Get a list of the albums saved in the current Spotify user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/)
+     - Parameters:
+     - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
+     - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
+     - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+     - completion: Handler containing decoded objects, called after completing the request.
+     */
+    static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedAlbum>, Error>) -> Void) {
         
-        private init() {}
+        var queryParams = [
+            "limit": String(limit),
+            "offset": String(offset),
+        ]
+        if let market = market {
+            queryParams["market"] = market
+        }
+        SPT.call(method: Method.savedAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+    
+    /**
+     Get a list of the songs saved in the current Spotify user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-tracks/)
+     - Parameters:
+     - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
+     - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
+     - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+     - completion: Handler containing decoded objects, called after completing the request.
+     */
+    static func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedTrack>, Error>) -> Void) {
+        
+        var queryParams = [
+            "limit": String(limit),
+            "offset": String(offset),
+        ]
+        if let market = market {
+            queryParams["market"] = market
+        }
+        SPT.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+    
+    /**
+     Get a list of the playlists owned or followed by the current Spotify user.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-a-list-of-current-users-playlists/)
+     - Parameters:
+     - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
+     - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
+     - completion: Handler containing decoded objects, called after completing the request.
+     */
+    static func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedPlaylist>, Error>) -> Void) {
+        
+        let queryParams = [
+            "limit": String(limit),
+            "offset": String(offset),
+        ]
+        SPT.call(method: Method.savedPlaylists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+    
+    /**
+     Save one or more tracks to the current user’s ‘Your Music’ library.
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func saveTracks(ids: [String], completion: ((Error?) -> Void)?) {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        SPT.call(method: Method.saveTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+    
+    /**
+     Save one or more albums to the current user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/save-albums-user/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func saveAlbums(ids: [String], completion: ((Error?) -> Void)?) {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        SPT.call(method: Method.saveAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+    
+    /**
+     Check if one or more albums is already saved in the current Spotify user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-albums/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether album is saved.
+     */
+    static func checkSavedAlbums(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        SPT.call(method: Method.checkSavedAlbums, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<[Bool], Error>) in
+            switch result {
+            case .success(let values):
+                let dict = Dictionary(uniqueKeysWithValues: zip(ids, values))
+                completion(.success(dict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    /**
+     Check if one or more tracks is already saved in the current Spotify user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-tracks/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether track is saved.
+     */
+    static func checkSavedTracks(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        SPT.call(method: Method.checkSavedTracks, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<[Bool], Error>) in
+            switch result {
+            case .success(let values):
+                let dict = Dictionary(uniqueKeysWithValues: zip(ids, values))
+                completion(.success(dict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    /**
+     Remove one or more tracks from the current user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/remove-albums-user/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func removeSavedTracks(ids: [String], completion: ((Error?) -> Void)?) {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        SPT.call(method: Method.removeTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+    
+    /**
+     Remove one or more albums from the current user’s ‘Your Music’ library.
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func removeSavedAlbums(ids: [String], completion: ((Error?) -> Void)?) {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        SPT.call(method: Method.removeAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+    }
+}
+
+// - MARK: Async/Await support.
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+public extension SPT.Library {
+    /**
+     Get a list of the albums saved in the current Spotify user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/)
+     - Parameters:
+     - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
+     - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
+     - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+     - completion: Handler containing decoded objects, called after completing the request.
+     */
+    static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTSavedAlbum> {
+        
+        var queryParams = [
+            "limit": String(limit),
+            "offset": String(offset),
+        ]
+        if let market = market {
+            queryParams["market"] = market
+        }
+        return try await SPT.call(method: Method.savedAlbums, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    /**
+     Get a list of the songs saved in the current Spotify user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-tracks/)
+     - Parameters:
+     - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
+     - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
+     - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+     - completion: Handler containing decoded objects, called after completing the request.
+     */
+    static func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTSavedTrack> {
+        
+        var queryParams = [
+            "limit": String(limit),
+            "offset": String(offset),
+        ]
+        if let market = market {
+            queryParams["market"] = market
+        }
+        return try await SPT.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    /**
+     Get a list of the playlists owned or followed by the current Spotify user.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-a-list-of-current-users-playlists/)
+     - Parameters:
+     - limit: The maximum number of objects to return. Default value is read from `SPT.limit`.
+     - offset: The index of the first object to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
+     - completion: Handler containing decoded objects, called after completing the request.
+     */
+    static func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTSimplifiedPlaylist> {
+        
+        let queryParams = [
+            "limit": String(limit),
+            "offset": String(offset),
+        ]
+        return try await SPT.call(method: Method.savedPlaylists, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    /**
+     Save one or more tracks to the current user’s ‘Your Music’ library.
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func saveTracks(ids: [String]) async throws {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        try await SPT.call(method: Method.saveTracks, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    /**
+     Save one or more albums to the current user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/save-albums-user/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func saveAlbums(ids: [String]) async throws {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        try await SPT.call(method: Method.saveAlbums, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    /**
+     Check if one or more albums is already saved in the current Spotify user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-albums/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether album is saved.
+     */
+    static func checkSavedAlbums(ids: [String]) async throws -> [String: Bool] {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        let values: [Bool] = try await SPT.call(method: Method.checkSavedAlbums, pathParam: nil, queryParams: queryParams, body: nil)
+        return Dictionary(uniqueKeysWithValues: zip(ids, values))
+    }
+    
+    /**
+     Check if one or more tracks is already saved in the current Spotify user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/check-users-saved-tracks/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether track is saved.
+     */
+    static func checkSavedTracks(ids: [String]) async throws -> [String: Bool] {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        let values: [Bool] = try await SPT.call(method: Method.checkSavedTracks, pathParam: nil, queryParams: queryParams, body: nil)
+        return Dictionary(uniqueKeysWithValues: zip(ids, values))
+    }
+    
+    /**
+     Remove one or more tracks from the current user’s ‘Your Music’ library.
+     [Read more](https://developer.spotify.com/documentation/web-api/reference/library/remove-albums-user/)
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func removeSavedTracks(ids: [String]) async throws {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        try await SPT.call(method: Method.removeTracks, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    /**
+     Remove one or more albums from the current user’s ‘Your Music’ library.
+     - Parameters:
+     - ids: A comma-separated list of the Spotify IDs. Maximum: 50 IDs.
+     - completion: Handler called after completing the request.
+     */
+    static func removeSavedAlbums(ids: [String]) async throws {
+        
+        let queryParams = [
+            "ids": ids.joined(separator: ",")
+        ]
+        try await SPT.call(method: Method.removeAlbums, pathParam: nil, queryParams: queryParams, body: nil)
     }
 }
