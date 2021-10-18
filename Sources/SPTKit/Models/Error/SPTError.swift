@@ -80,4 +80,5 @@ public extension SPTError {
     static let albumGroupsEmpty = SPTError(status: 56, message: "Album groups cannot be empty.")
     static let badResponse = SPTError(status: 57, message: "Received invalid response.")
     static let emptyParameter = SPTError(status: 58, message: "Parameter cannot be empty.")
+    static let notFirstPage = SPTError(status: 59, message: "You cannot call \"compact\" method on non-first paging object.")
 }

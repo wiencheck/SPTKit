@@ -51,6 +51,37 @@ public extension SPTPagingObject {
     func getNext(completion: @escaping (Result<SPTPagingObject<T>, Error>) -> Void) {
         getPage(url: next, completion: completion)
     }
+    
+    /**
+     Fetches and returns items from this and all related paging objects.
+     */
+    func compact(completion: @escaping (Result<[T], Error>) -> Void) {
+        if canMakePreviousRequest {
+            completion(.failure(SPTError.notFirstPage))
+            return
+        }
+        
+        func onCompletion(result: Result<SPTPagingObject<T>, Error>) {
+            switch result {
+            case .success(let nextPage):
+                allItems.append(contentsOf: nextPage.items)
+                guard nextPage.canMakeNextRequest else {
+                    completion(.success(allItems))
+                    return
+                }
+                nextPage.getNext(completion: onCompletion)
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        
+        var allItems: [T] = items
+        guard canMakeNextRequest else {
+            completion(.success(allItems))
+            return
+        }
+        getNext(completion: onCompletion)
+    }
 }
 
 // - MARK: Async/Await support.
@@ -75,5 +106,16 @@ public extension SPTPagingObject {
     
     func getNext() async throws -> SPTPagingObject<T> {
         try await getPage(url: next)
+    }
+    
+    /**
+     Fetches and returns items from this and all related paging objects.
+     */
+    func compact() async throws -> [T] {
+        try await withCheckedThrowingContinuation { continuation in
+            self.compact { result in
+                continuation.resume(with: result)
+            }
+        }
     }
 }
