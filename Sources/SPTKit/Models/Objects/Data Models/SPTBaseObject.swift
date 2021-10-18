@@ -59,16 +59,6 @@ public class SPTBaseObject: Codable, GRDBRecord {
         """
     }
     
-    // MARK: `Equatable` conformance
-    public static func == (lhs: SPTBaseObject, rhs: SPTBaseObject) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    // MARK: `Hashable` conformance
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(uri)
-    }
-    
     // MARK: GRDB stuff
     public class Columns {
         public static let type = Column(CodingKeys.type)
@@ -99,6 +89,20 @@ public class SPTBaseObject: Codable, GRDBRecord {
         return (migrationTitle, { db in
             try db.create(table: databaseTableName, body: tableDefinitions)
         })
+    }
+}
+
+// MARK: `Equatable` conformance
+extension SPTBaseObject: Equatable {
+    public static func == (lhs: SPTBaseObject, rhs: SPTBaseObject) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
+
+// MARK: `Hashable` conformance
+extension SPTBaseObject: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(uri)
     }
 }
 

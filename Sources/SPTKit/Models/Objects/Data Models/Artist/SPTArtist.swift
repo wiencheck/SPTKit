@@ -91,7 +91,29 @@ public class SPTArtist: SPTBaseObject {
         try super.encode(to: encoder)
     }
     
+    public class Columns: SPTBaseObject.Columns {
+        public static let name = Column(CodingKeys.name)
+        
+        public static let followers = Column(CodingKeys.followers)
+        public static let genres = Column(CodingKeys.genres)
+        public static let images = Column(CodingKeys.images)
+        public static let popularity = Column(CodingKeys.popularity)
+    }
+    
     public override class var databaseTableName: String { "artist" }
+    
+    override class var tableDefinitions: (TableDefinition) -> Void {
+        { table in
+            super.tableDefinitions(table)
+            
+            table.column(CodingKeys.name.rawValue, .text).notNull()
+            
+            table.column(CodingKeys.followers.rawValue, .blob)
+            table.column(CodingKeys.genres.rawValue, .blob)
+            table.column(CodingKeys.images.rawValue, .blob)
+            table.column(CodingKeys.popularity.rawValue, .blob)
+        }
+    }
 }
 
 extension SPTArtist: Nestable {

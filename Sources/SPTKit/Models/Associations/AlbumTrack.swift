@@ -8,22 +8,20 @@
 import Foundation
 import GRDB
 
-public struct AlbumTrack: Codable {
+public struct AlbumTrack: Codable, Hashable {
     public let albumId: String
     public let trackId: String
     
-    public let position: Int
-    
-    public init(albumId: String, trackId: String, position: Int) {
+    public init(albumId: String, trackId: String) {
         self.albumId = albumId
         self.trackId = trackId
-        self.position = position
     }
 }
 
 extension AlbumTrack: GRDBRecord {
     
     static let track = belongsTo(SPTTrack.self)
+    static let album = belongsTo(SPTAlbum.self)
     
     public static var migration: Migration {
         return ("createAlbumTrack", { db in
@@ -34,8 +32,6 @@ extension AlbumTrack: GRDBRecord {
                 table.column("trackId", .text)
                     .notNull()
                     .references(SPTTrack.databaseTableName, onDelete: .cascade)
-                table.column("position", .integer)
-                    .notNull()
                 table.primaryKey(["albumId", "trackId"], onConflict: .replace)
             }
         })
@@ -45,10 +41,22 @@ extension AlbumTrack: GRDBRecord {
 extension SPTAlbum {
     private static let albumTracks = hasMany(AlbumTrack.self)
     private static let tracks = hasMany(SPTTrack.self,
-                                        through: albumTracks.order(Column("position")),
+                                        through: albumTracks,
                                         using: AlbumTrack.track)
     
     public var albumTracks: QueryInterfaceRequest<SPTTrack> {
         request(for: Self.tracks)
+            .order(SPTTrack.Columns.trackNumber)
+    }
+}
+
+extension SPTTrack {
+    private static let trackAlbums = hasMany(AlbumTrack.self)
+    private static let albums = hasMany(SPTAlbum.self,
+                                        through: trackAlbums,
+                                        using: AlbumTrack.album)
+    
+    public var trackAlbums: QueryInterfaceRequest<SPTAlbum> {
+        request(for: Self.albums)
     }
 }

@@ -79,4 +79,5 @@ public extension SPTError {
     static let exceededRequestedIdCount = SPTError(status: 55, message: "Maximum number of requested ids was exceeded.")
     static let albumGroupsEmpty = SPTError(status: 56, message: "Album groups cannot be empty.")
     static let badResponse = SPTError(status: 57, message: "Received invalid response.")
+    static let emptyParameter = SPTError(status: 58, message: "Parameter cannot be empty.")
 }

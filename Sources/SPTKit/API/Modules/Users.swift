@@ -17,34 +17,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
-
-extension SPT {
+public extension SPT {
     /**
      Endpoints for retrieving information about a user’s profile.
      */
-    public class Users {
-        /**
-         Add the current user as a follower of a playlist.
-         - Parameters:
-            - completion: Handler called after completing the request.
-         */
-        public class func getCurrentUser(completion: @escaping (Result<SPTPrivateUser, Error>) -> Void) {
-            
-            SPT.call(method: Method.getCurrentUser, pathParam: nil, queryParams: nil, body: nil, completion: completion)
-        }
-        
-        /**
-         Get public profile information about a Spotify user.
-         - Parameters:
-            - identifier: The user’s [Spotify user ID](https://developer.spotify.com/documentation/web-api/#spotify-uris-and-ids).
-            - completion: Handler called after completing the request.
-         */
-        public class func getUser(identifier: String, completion: @escaping (Result<SPTPublicUser, Error>) -> Void) {
-            
-            SPT.call(method: Method.getUser, pathParam: identifier, queryParams: nil, body: nil, completion: completion)
-        }
-        
+    struct Users {
         private enum Method: SPTMethod {
             // Read methods
             case getCurrentUser, getUser
@@ -60,5 +37,52 @@ extension SPT {
         }
         
         private init() {}
+    }
+}
+
+public extension SPT.Users {
+    /**
+     Add the current user as a follower of a playlist.
+     - Parameters:
+        - completion: Handler called after completing the request.
+     */
+    static func getCurrentUser(completion: @escaping (Result<SPTPrivateUser, Error>) -> Void) {
+        
+        SPT.call(method: Method.getCurrentUser, pathParam: nil, queryParams: nil, body: nil, completion: completion)
+    }
+    
+    /**
+     Get public profile information about a Spotify user.
+     - Parameters:
+        - identifier: The user’s [Spotify user ID](https://developer.spotify.com/documentation/web-api/#spotify-uris-and-ids).
+        - completion: Handler called after completing the request.
+     */
+    static func getUser(identifier: String, completion: @escaping (Result<SPTPublicUser, Error>) -> Void) {
+        
+        SPT.call(method: Method.getUser, pathParam: identifier, queryParams: nil, body: nil, completion: completion)
+    }
+}
+
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+public extension SPT.Users {
+    /**
+     Add the current user as a follower of a playlist.
+     - Parameters:
+        - completion: Handler called after completing the request.
+     */
+    static func getCurrentUser() async throws -> SPTPrivateUser {
+        
+        try await SPT.call(method: Method.getCurrentUser, pathParam: nil, queryParams: nil, body: nil)
+    }
+    
+    /**
+     Get public profile information about a Spotify user.
+     - Parameters:
+        - identifier: The user’s [Spotify user ID](https://developer.spotify.com/documentation/web-api/#spotify-uris-and-ids).
+        - completion: Handler called after completing the request.
+     */
+    static func getUser(identifier: String) async throws -> SPTPublicUser {
+        
+        try await SPT.call(method: Method.getUser, pathParam: identifier, queryParams: nil, body: nil)
     }
 }

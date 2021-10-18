@@ -163,6 +163,23 @@ public class SPTAlbum: SPTBaseObject {
         try super.encode(to: encoder)
     }
     
+    public class Columns: SPTBaseObject.Columns {
+        public static let albumGroup = Column(CodingKeys.albumGroup)
+        public static let albumType = Column(CodingKeys.albumType)
+        public static let artists = Column(CodingKeys.artists)
+        public static let availableMarkets = Column(CodingKeys.availableMarkets)
+        public static let images = Column(CodingKeys.images)
+        public static let name = Column(CodingKeys.name)
+        public static let releaseDatePrecision = Column(CodingKeys.releaseDatePrecision)
+        
+        public static let releaseDate = Column(CodingKeys.releaseDate)
+        public static let copyrights = Column(CodingKeys.copyrights)
+        public static let genres = Column(CodingKeys.genres)
+        public static let label = Column(CodingKeys.label)
+        public static let popularity = Column(CodingKeys.popularity)
+        public static let tracks = Column(CodingKeys.tracks)
+    }
+    
     public override class var databaseTableName: String { "album" }
     
     override class var tableDefinitions: (TableDefinition) -> Void {

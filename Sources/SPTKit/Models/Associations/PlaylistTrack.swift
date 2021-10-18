@@ -8,7 +8,7 @@
 import Foundation
 import GRDB
 
-public struct PlaylistTrack: Codable {
+public struct PlaylistTrack: Codable, Hashable {
     public let playlistId: String
     public let trackId: String
     

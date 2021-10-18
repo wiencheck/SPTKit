@@ -2,12 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "SPTKitModels",
-        "repositoryURL": "https://github.com/wiencheck/SPTKitModels.git",
+        "package": "GRDB",
+        "repositoryURL": "https://github.com/groue/GRDB.swift",
         "state": {
           "branch": null,
-          "revision": "d6eac069a2a52512ca3212b4f40f6db6329ece6b",
-          "version": "1.0.0"
+          "revision": "32b2923e890df320906e64cbd0faca22a8bfda14",
+          "version": "5.12.0"
         }
       }
     ]
