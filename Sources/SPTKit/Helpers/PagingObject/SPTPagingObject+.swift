@@ -54,6 +54,9 @@ public extension SPTPagingObject {
     
     /**
      Fetches and returns items from this and all related paging objects.
+     
+     - Warning:
+        Has to be called **only** on first paging object.
      */
     func compact(completion: @escaping (Result<[T], Error>) -> Void) {
         if canMakePreviousRequest {
@@ -110,6 +113,9 @@ public extension SPTPagingObject {
     
     /**
      Fetches and returns items from this and all related paging objects.
+     
+     - Warning:
+        Has to be called **only** on first paging object.
      */
     func compact() async throws -> [T] {
         try await withCheckedThrowingContinuation { continuation in

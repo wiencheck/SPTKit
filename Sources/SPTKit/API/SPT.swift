@@ -153,7 +153,6 @@ extension SPT {
 }
 
 // - MARK: Async/Await support.
-// - MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 extension SPT {
     static func perform<T>(request: URLRequest) async throws -> T where T: Decodable {
