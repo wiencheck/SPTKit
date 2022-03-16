@@ -64,13 +64,7 @@ public class SPTAlbum: SPTSimplifiedAlbum {
     }
 
     public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(copyrights, forKey: .copyrights)
-        try container.encode(genres, forKey: .genres)
-        try container.encode(label, forKey: .label)
-        try container.encode(popularity, forKey: .popularity)
-        try container.encode(tracks, forKey: .tracks)
+        // Leaving empty so only values from simplified objects get saved to database.
         
         try super.encode(to: encoder)
     }

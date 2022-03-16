@@ -132,14 +132,7 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         if let albumTitle = try container.decodeIfPresent(String.self, forKey: .albumTitle) {
             self.albumTitle = albumTitle
         }
-        else if let album = try container.decodeIfPresent(SPTSimplifiedAlbum.self, forKey: .album) {
-            self.albumTitle = album.name
-        }
-        if let artistNamesString = try container.decodeIfPresent(String.self, forKey: .artistNames) {
-            artistNames = artistNamesString.components(separatedBy: ";")
-        } else {
-            artistNames = []
-        }
+        artistNames = artists.map(\.name)
         
         try super.init(from: decoder)
     }

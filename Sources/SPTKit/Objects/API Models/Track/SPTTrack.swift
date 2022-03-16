@@ -45,14 +45,14 @@ public class SPTTrack: SPTSimplifiedTrack {
         popularity = try container.decode(Int.self, forKey: .popularity)
         
         try super.init(from: decoder)
+        if albumTitle == nil {
+            albumTitle = album.name
+        }
     }
 
     public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(album, forKey: .album)
-        try container.encode(popularity, forKey: .popularity)
-        
+        // Leaving empty so only values from simplified objects get saved to database.
+
         try super.encode(to: encoder)
     }
 }

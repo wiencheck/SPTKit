@@ -70,7 +70,7 @@ public extension SPT.Albums {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTTrack>, Error>) -> Void) {
+    static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedTrack>, Error>) -> Void) {
         
         var queryParams = [
             "limit": String(limit),
@@ -141,7 +141,7 @@ public extension SPT.Albums {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTTrack> {
+    static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTSimplifiedTrack> {
         
         var queryParams = [
             "limit": String(limit),

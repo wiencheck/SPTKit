@@ -43,7 +43,12 @@ struct Nested<T>: Decodable where T: Nestable {
         }
         let throwables = try container.decode([Throwable<T>].self, forKey: codingKey)
         items = throwables.compactMap {
-            try? $0.result.get()
+            do {
+                return try $0.result.get()
+            } catch {
+                print(error)
+            }
+            return nil
         }
     }
 }

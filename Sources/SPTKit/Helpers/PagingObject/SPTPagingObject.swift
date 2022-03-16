@@ -57,7 +57,12 @@ public struct SPTPagingObject<T: Codable>: Codable {
         
         let throwables = try container.decode([Throwable<T>].self, forKey: .items)
         items = throwables.compactMap {
-            try? $0.result.get()
+            do {
+                return try $0.result.get()
+            } catch {
+                print(error)
+            }
+            return nil
         }
         limit = try container.decode(Int.self, forKey: .limit)
         next = try container.decodeIfPresent(URL.self, forKey: .next)

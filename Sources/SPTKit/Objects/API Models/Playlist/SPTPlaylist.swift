@@ -39,8 +39,7 @@ public class SPTPlaylist: SPTSimplifiedPlaylist {
     }
 
     public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(followers, forKey: .followers)
+        // Leaving empty so only values from simplified objects get saved to database.
         
         try super.encode(to: encoder)
     }

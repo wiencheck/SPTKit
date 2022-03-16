@@ -57,12 +57,7 @@ public class SPTArtist: SPTSimplifiedArtist {
     }
 
     public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(followers, forKey: .followers)
-        try container.encode(genres, forKey: .genres)
-        try container.encode(images, forKey: .images)
-        try container.encode(popularity, forKey: .popularity)
+        // Leaving empty so only values from simplified objects get saved to database.
         
         try super.encode(to: encoder)
     }

@@ -88,7 +88,7 @@ public class SPTBaseObject: Codable, GRDBRecord {
         table.column(CodingKeys.externalURLs.stringValue, .blob).notNull()
     }
     
-    public class var migration: Migration {
+    public static var migration: Migration {
         
         let migrationTitle = "create\(databaseTableName.capitalized)"
         return (migrationTitle, { db in

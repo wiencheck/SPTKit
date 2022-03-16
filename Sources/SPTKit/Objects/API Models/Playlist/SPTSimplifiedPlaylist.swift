@@ -73,7 +73,7 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
     
     // MARK: Codable stuff
     private enum CodingKeys: String, CodingKey {
-        case images, name, owner, tracks
+        case images, name, owner, tracks, total
         case isCollaborative = "collaborative"
         case descriptionText = "description"
         case snapshotId = "snapshot_id"
@@ -97,8 +97,14 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
         snapshotId = try container.decode(String.self, forKey: .snapshotId)
         isPublic = try container.decodeIfPresent(Bool.self, forKey: .isPublic)
         
-        let subcontainer = try container.nestedContainer(keyedBy: TracksCodingKeys.self, forKey: .tracks)
-        total = try subcontainer.decode(Int.self, forKey: .total)
+        // First checking if value exists without using nested container to avoid fatal error coming from GRDB.
+        if let total = try container.decodeIfPresent(Int.self, forKey: .total) {
+            self.total = total
+        }
+        else {
+            let subcontainer = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .tracks)
+            total = try subcontainer.decode(Int.self, forKey: .total)
+        }
         
         // Decode custom properties
         ownerName = owner.displayName
@@ -116,6 +122,7 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
         try container.encode(descriptionText, forKey: .descriptionText)
         try container.encode(snapshotId, forKey: .snapshotId)
         try container.encode(isPublic, forKey: .isPublic)
+        try container.encode(total, forKey: .total)
         
         // Encode custom properties
         try container.encodeIfPresent(ownerName, forKey: .ownerName)
@@ -150,7 +157,7 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
         table.column(CodingKeys.descriptionText.stringValue, .text)
         table.column(CodingKeys.snapshotId.stringValue, .text).notNull()
         table.column(CodingKeys.isPublic.stringValue, .boolean)
-        table.column(TracksCodingKeys.total.stringValue, .integer).notNull()
+        table.column(CodingKeys.total.stringValue, .integer).notNull()
         
         table.column(CodingKeys.ownerName.stringValue, .text)
     }
