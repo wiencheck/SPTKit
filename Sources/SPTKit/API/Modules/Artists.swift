@@ -165,7 +165,7 @@ public extension SPT.Artists {
     }
 }
 
-// - MARK: Async/Await support.
+// MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Artists {
     /**
@@ -173,11 +173,7 @@ public extension SPT.Artists {
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/)
      
      - Parameters:
-     - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
-     - limit: The maximum number of tracks to return.
-     - offset: The index of the first track to return. Default: 0 (the first object). Use with limit to get the next set of tracks.
-     - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
-     - completion: Handler containing decoded objects, called after completing the request.
+        - id: Spotify IDs for the artist.
      */
     static func getArtist(id: String) async throws -> SPTArtist {
         try await SPT.call(method: Method.artist, pathParam: id, queryParams: nil, body: nil)
@@ -188,11 +184,10 @@ public extension SPT.Artists {
      [Read more]( https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-albums/)
      
      - Parameters:
-     - id: The Spotify ID for the artist.
-     - groups:
-     - limit: The number of album objects to return. Default: 20. Minimum: 1. Maximum: 50.
-     - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
-     - completion: Handler called on success or failure.
+        - id: The Spotify ID for the artist.
+        - groups:
+        - limit: The number of album objects to return. Default: 20. Minimum: 1. Maximum: 50.
+        - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
      */
     static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTAlbum> {
         
@@ -219,11 +214,10 @@ public extension SPT.Artists {
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-top-tracks/)
      
      - Parameters:
-     - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
-     - limit: The maximum number of tracks to return.
-     - offset: The index of the first track to return. Default: 0 (the first object). Use with limit to get the next set of tracks.
-     - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
-     - completion: Handler containing decoded objects, called after completing the request.
+        - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
+        - limit: The maximum number of tracks to return.
+        - offset: The index of the first track to return. Default: 0 (the first object). Use with limit to get the next set of tracks.
+        - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      */
     static func getArtistTopTracks(id: String, market: String? = SPT.countryCode) async throws -> [SPTTrack] {
         
@@ -237,9 +231,10 @@ public extension SPT.Artists {
     /**
      Get Spotify catalog information for several artists based on their Spotify IDs.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-several-artists/)
+     
      - Parameters:
-     - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
-     - completion: Handler containing decoded objects, called after completing the request.
+        - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
+        - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getSeveralArtists(ids: [String]) async throws -> [SPTArtist] {
         
@@ -256,6 +251,9 @@ public extension SPT.Artists {
     /**
      Get Spotify catalog information about artists similar to a given artist. Similarity is based on analysis of the Spotify community’s listening history.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-related-artists/)
+     
+     - Parameters:
+        - id: Spotify IDs for the artist.
      */
     static func getArtistRelatedArtists(id: String) async throws -> [SPTArtist] {
         

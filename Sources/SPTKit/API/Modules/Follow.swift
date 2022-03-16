@@ -98,7 +98,7 @@ public extension SPT.Follow {
     }
 }
 
-// - MARK: Async/Await support.
+// MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Follow {
     

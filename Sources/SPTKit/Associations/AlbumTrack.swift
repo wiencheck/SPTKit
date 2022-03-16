@@ -10,10 +10,11 @@ import GRDB
 
 /// Helper struct for creating associations between album and its tracks.
 public struct AlbumTrack: Codable, Hashable {
-    public let albumId: String
-    public let trackId: String
     
-    public init(albumId: String, trackId: String) {
+    public let albumId: SPTSimplifiedAlbum.ID
+    public let trackId: SPTSimplifiedTrack.ID
+        
+    public init(albumId: SPTSimplifiedAlbum.ID, trackId: SPTSimplifiedTrack.ID) {
         self.albumId = albumId
         self.trackId = trackId
     }
@@ -21,8 +22,8 @@ public struct AlbumTrack: Codable, Hashable {
 
 extension AlbumTrack: GRDBRecord {
     
-    static let track = belongsTo(SPTTrack.self)
-    static let album = belongsTo(SPTAlbum.self)
+    static let track = belongsTo(SPTSimplifiedTrack.self)
+    static let album = belongsTo(SPTSimplifiedAlbum.self)
     
     public static var databaseTableName: String { "albumTrack" }
     
@@ -31,37 +32,37 @@ extension AlbumTrack: GRDBRecord {
             try db.create(table: databaseTableName) { table in
                 table.column("albumId", .text)
                     .notNull()
-                    .references(SPTAlbum.databaseTableName, onDelete: .cascade)
+                    .references(SPTSimplifiedAlbum.databaseTableName, onDelete: .cascade)
                 table.column("trackId", .text)
                     .notNull()
-                    .references(SPTTrack.databaseTableName, onDelete: .cascade)
+                    .references(SPTSimplifiedTrack.databaseTableName, onDelete: .cascade)
                 table.primaryKey(["albumId", "trackId"], onConflict: .replace)
             }
         })
     }
 }
 
-extension SPTAlbum {
+extension SPTSimplifiedAlbum {
     private static let albumTracks = hasMany(AlbumTrack.self)
-    private static let tracks = hasMany(SPTTrack.self,
+    private static let tracks = hasMany(SPTSimplifiedTrack.self,
                                         through: albumTracks,
                                         using: AlbumTrack.track)
     
     /// Request for fetching associated tracks from the local database.
-    public var albumTracks: QueryInterfaceRequest<SPTTrack> {
+    public var albumTracks: QueryInterfaceRequest<SPTSimplifiedTrack> {
         request(for: Self.tracks)
-            .order(SPTTrack.Columns.trackNumber)
+            .order(SPTSimplifiedTrack.Columns.trackNumber)
     }
 }
 
-extension SPTTrack {
+extension SPTSimplifiedTrack {
     private static let trackAlbums = hasMany(AlbumTrack.self)
-    private static let albums = hasMany(SPTAlbum.self,
+    private static let albums = hasMany(SPTSimplifiedAlbum.self,
                                         through: trackAlbums,
                                         using: AlbumTrack.album)
     
     /// Request for fetching associated albums from the local database.
-    public var trackAlbums: QueryInterfaceRequest<SPTAlbum> {
+    public var trackAlbums: QueryInterfaceRequest<SPTSimplifiedAlbum> {
         request(for: Self.albums)
     }
 }

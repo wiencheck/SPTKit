@@ -10,10 +10,11 @@ import GRDB
 
 /// Helper struct for creating associations between artist and his/her albums.
 public struct ArtistAlbum: Codable, Hashable {
-    public let artistId: String
-    public let albumId: String
     
-    public init(artistId: String, albumId: String) {
+    public let artistId: SPTSimplifiedArtist.ID
+    public let albumId: SPTSimplifiedAlbum.ID
+        
+    public init(artistId: SPTSimplifiedArtist.ID, albumId: SPTSimplifiedAlbum.ID) {
         self.artistId = artistId
         self.albumId = albumId
     }
@@ -21,7 +22,7 @@ public struct ArtistAlbum: Codable, Hashable {
 
 extension ArtistAlbum: GRDBRecord {
     
-    static let album = belongsTo(SPTAlbum.self)
+    static let album = belongsTo(SPTSimplifiedAlbum.self)
     
     public static var databaseTableName: String { "artistAlbum" }
     
@@ -30,24 +31,24 @@ extension ArtistAlbum: GRDBRecord {
             try db.create(table: databaseTableName) { table in
                 table.column("artistId", .text)
                     .notNull()
-                    .references(SPTArtist.databaseTableName, onDelete: .cascade)
+                    .references(SPTSimplifiedArtist.databaseTableName, onDelete: .cascade)
                 table.column("albumId", .text)
                     .notNull()
-                    .references(SPTAlbum.databaseTableName, onDelete: .cascade)
+                    .references(SPTSimplifiedAlbum.databaseTableName, onDelete: .cascade)
                 table.primaryKey(["artistId", "albumId"], onConflict: .replace)
             }
         })
     }
 }
 
-extension SPTArtist {
+extension SPTSimplifiedArtist {
     private static let artistAlbums = hasMany(ArtistAlbum.self)
-    private static let albums = hasMany(SPTAlbum.self,
+    private static let albums = hasMany(SPTSimplifiedAlbum.self,
                                         through: artistAlbums,
                                         using: ArtistAlbum.album)
     
     /// Request for fetching associated albums from the local database.
-    public var artistAlbums: QueryInterfaceRequest<SPTAlbum> {
+    public var artistAlbums: QueryInterfaceRequest<SPTSimplifiedAlbum> {
         request(for: Self.albums)
     }
 }

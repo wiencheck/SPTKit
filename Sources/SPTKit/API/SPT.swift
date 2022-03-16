@@ -35,7 +35,7 @@ public struct SPT {
      Default value is current `Locale`'s region code.
      */
     public static var countryCode: String? = Locale.current.regionCode
-    
+        
     private static var session: URLSession {
         return URLSession.shared
     }
@@ -152,7 +152,7 @@ extension SPT {
     }
 }
 
-// - MARK: Async/Await support.
+// MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 extension SPT {
     static func perform<T>(request: URLRequest) async throws -> T where T: Decodable {
@@ -176,7 +176,7 @@ extension SPT {
     }
 }
 
-// - MARK: Async/Await support.
+// MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 extension SPT {
     static func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) async throws -> T where T: Decodable {

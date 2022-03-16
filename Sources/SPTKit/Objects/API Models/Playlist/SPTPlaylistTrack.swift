@@ -17,7 +17,6 @@
 // THE SOFTWARE.
 
 import Foundation
-import GRDB
 
 /// Playlist track object
 public class SPTPlaylistTrack: Codable {

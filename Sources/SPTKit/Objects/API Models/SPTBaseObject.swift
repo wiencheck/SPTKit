@@ -45,6 +45,9 @@ public class SPTBaseObject: Codable, GRDBRecord {
      */
     public let externalURLs: [String: URL]
     
+    /// The user information for the record.
+    public var userInfo: [AnyHashable : Any]?
+    
     // MARK: Codable stuff
     private enum CodingKeys: String, CodingKey {
         case type, uri, id
@@ -70,19 +73,23 @@ public class SPTBaseObject: Codable, GRDBRecord {
         private init() {}
     }
     
-    public class var databaseTableName: String { fatalError("*** Must override in subclasses.") }
+    public class var databaseTableName: String {
+        fatalError("*** Must override in subclasses.")
+    }
     
     class func defineColumns(onTable table: TableDefinition) {
-        table.column(CodingKeys.id.rawValue, .text).notNull()
+        
+        table.column(CodingKeys.id.stringValue, .text).notNull()
             .primaryKey()
-            .unique(onConflict: .ignore)
-        table.column(CodingKeys.type.rawValue, .text).notNull()
-        table.column(CodingKeys.uri.rawValue, .text).notNull()
-        table.column(CodingKeys.url.rawValue, .text).notNull()
-        table.column(CodingKeys.externalURLs.rawValue, .blob).notNull()
+            .unique(onConflict: .replace)
+        table.column(CodingKeys.type.stringValue, .text).notNull()
+        table.column(CodingKeys.uri.stringValue, .text).notNull()
+        table.column(CodingKeys.url.stringValue, .text).notNull()
+        table.column(CodingKeys.externalURLs.stringValue, .blob).notNull()
     }
     
     public class var migration: Migration {
+        
         let migrationTitle = "create\(databaseTableName.capitalized)"
         return (migrationTitle, { db in
             try db.create(table: databaseTableName, body: defineColumns)
@@ -92,15 +99,25 @@ public class SPTBaseObject: Codable, GRDBRecord {
 
 // MARK: `Equatable` conformance
 extension SPTBaseObject: Equatable {
+    
     public static func == (lhs: SPTBaseObject, rhs: SPTBaseObject) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id &&
+        lhs.uri == rhs.uri &&
+        lhs.type == rhs.type &&
+        lhs.url == rhs.url &&
+        lhs.externalURLs == rhs.externalURLs
     }
 }
 
 // MARK: `Hashable` conformance
 extension SPTBaseObject: Hashable {
+    
     public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
         hasher.combine(uri)
+        hasher.combine(type)
+        hasher.combine(url)
+        hasher.combine(externalURLs)
     }
 }
 

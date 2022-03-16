@@ -10,10 +10,11 @@ import GRDB
 
 /// Helper struct for creating associations between artist and his/her tracks.
 public struct ArtistTrack: Codable, Hashable {
-    public let artistId: String
-    public let trackId: String
     
-    public init(artistId: String, trackId: String) {
+    public let artistId: SPTSimplifiedArtist.ID
+    public let trackId: SPTSimplifiedTrack.ID
+        
+    public init(artistId: SPTSimplifiedArtist.ID, trackId: SPTSimplifiedTrack.ID) {
         self.artistId = artistId
         self.trackId = trackId
     }
@@ -21,7 +22,7 @@ public struct ArtistTrack: Codable, Hashable {
 
 extension ArtistTrack: GRDBRecord {
     
-    static let track = belongsTo(SPTTrack.self)
+    static let track = belongsTo(SPTSimplifiedTrack.self)
     
     public static var databaseTableName: String { "artistTrack" }
     
@@ -30,24 +31,24 @@ extension ArtistTrack: GRDBRecord {
             try db.create(table: databaseTableName) { table in
                 table.column("artistId", .text)
                     .notNull()
-                    .references(SPTArtist.databaseTableName, onDelete: .cascade)
+                    .references(SPTSimplifiedArtist.databaseTableName, onDelete: .cascade)
                 table.column("trackId", .text)
                     .notNull()
-                    .references(SPTTrack.databaseTableName, onDelete: .cascade)
+                    .references(SPTSimplifiedTrack.databaseTableName, onDelete: .cascade)
                 table.primaryKey(["artistId", "trackId"], onConflict: .replace)
             }
         })
     }
 }
 
-extension SPTArtist {
+extension SPTSimplifiedArtist {
     private static let artistTracks = hasMany(ArtistTrack.self)
-    private static let tracks = hasMany(SPTTrack.self,
+    private static let tracks = hasMany(SPTSimplifiedTrack.self,
                                         through: artistTracks,
                                         using: ArtistTrack.track)
     
     /// Request for fetching associated tracks from the local database.
-    public var artistTracks: QueryInterfaceRequest<SPTTrack> {
+    public var artistTracks: QueryInterfaceRequest<SPTSimplifiedTrack> {
         request(for: Self.tracks)
     }
 }

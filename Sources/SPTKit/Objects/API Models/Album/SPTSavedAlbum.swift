@@ -17,7 +17,6 @@
 // THE SOFTWARE.
 
 import Foundation
-import GRDB
 
 /// Saved Album object containing reference to the full Album object.
 public class SPTSavedAlbum: Codable {

@@ -17,105 +17,53 @@
 // THE SOFTWARE.
 
 import Foundation
-import GRDB
 
 /// Full Artist object.
-public class SPTArtist: SPTBaseObject {
-    /**
-     The name of this artist.
-     */
-    public let name: String
-    
+public class SPTArtist: SPTSimplifiedArtist {
     /**
      Information about the followers of the artist.
-     
-     - Warning: This value is always `nil` in simplified objects.
      */
-    public let followers: SPTFollowers?
+    public let followers: SPTFollowers
     
     /**
      A list of the genres the artist is associated with. For example: "Prog Rock" , "Post-Grunge". (If not yet classified, the array is empty.)
-     
-     - Warning: This value is always `nil` in simplified objects.
      */
-    public let genres: [String]?
+    public let genres: [String]
     
     /**
      Images of the artist in various sizes, widest first.
-     
-     - Warning: This value is always `nil` in simplified objects.
      */
-    public let images: [SPTImage]?
+    public let images: [SPTImage]
     
     /**
      The popularity of the artist. The value will be between 0 and 100, with 100 being the most popular. The artist’s popularity is calculated from the popularity of all the artist’s tracks.
-     
-     - Warning: This value is always `nil` in simplified objects.
      */
-    public let popularity: Int?
-    
-    public override var description: String {
-        return """
-           Artist: \"\(name)\", uri: \(uri)
-        """
-    }
+    public let popularity: Int
     
     // MARK: Codable stuff
     private enum CodingKeys: String, CodingKey {
-        case name, followers, genres, images, popularity
+        case followers, genres, images, popularity
     }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        name = try container.decode(String.self, forKey: .name)
-        
-        followers = try container.decodeIfPresent(SPTFollowers.self, forKey: .followers)
-        genres = try container.decodeIfPresent([String].self, forKey: .genres)
-        images = try container.decodeIfPresent([SPTImage].self, forKey: .images)
-        popularity = try container.decodeIfPresent(Int.self, forKey: .popularity)
+        followers = try container.decode(SPTFollowers.self, forKey: .followers)
+        genres = try container.decode([String].self, forKey: .genres)
+        images = try container.decode([SPTImage].self, forKey: .images)
+        popularity = try container.decode(Int.self, forKey: .popularity)
         
         try super.init(from: decoder)
     }
-    
+
     public override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(name, forKey: .name)
-        
-        try container.encodeIfPresent(followers, forKey: .followers)
-        try container.encodeIfPresent(genres, forKey: .genres)
-        try container.encodeIfPresent(images, forKey: .images)
-        try container.encodeIfPresent(popularity, forKey: .popularity)
+        try container.encode(followers, forKey: .followers)
+        try container.encode(genres, forKey: .genres)
+        try container.encode(images, forKey: .images)
+        try container.encode(popularity, forKey: .popularity)
         
         try super.encode(to: encoder)
-    }
-    
-    public class Columns: SPTBaseObject.Columns {
-        public static let name = Column(CodingKeys.name)
-        
-        public static let followers = Column(CodingKeys.followers)
-        public static let genres = Column(CodingKeys.genres)
-        public static let images = Column(CodingKeys.images)
-        public static let popularity = Column(CodingKeys.popularity)
-    }
-    
-    public override class var databaseTableName: String { "artist" }
-    
-    public override class func defineColumns(onTable table: TableDefinition) {
-        super.defineColumns(onTable: table)
-        
-        table.column(CodingKeys.name.rawValue, .text).notNull()
-        
-        table.column(CodingKeys.followers.rawValue, .blob)
-        table.column(CodingKeys.genres.rawValue, .blob)
-        table.column(CodingKeys.images.rawValue, .blob)
-        table.column(CodingKeys.popularity.rawValue, .blob)
-    }
-}
-
-extension SPTArtist: Nestable {
-    static var pluralKey: String {
-        return "artists"
     }
 }

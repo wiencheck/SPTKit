@@ -10,13 +10,14 @@ import GRDB
 
 /// Helper struct for creating associations between playlist and its tracks.
 public struct PlaylistTrack: Codable, Hashable {
-    public let playlistId: String
-    public let trackId: String
+    
+    public let playlistId: SPTSimplifiedPlaylist.ID
+    public let trackId: SPTSimplifiedTrack.ID
     
     public let position: Int
     public let addedDate: Date?
-    
-    public init(playlistId: String, trackId: String, position: Int, addedDate: Date?) {
+        
+    public init(playlistId: SPTSimplifiedPlaylist.ID, trackId: SPTSimplifiedTrack.ID, position: Int, addedDate: Date?) {
         self.playlistId = playlistId
         self.trackId = trackId
         self.position = position
@@ -26,7 +27,7 @@ public struct PlaylistTrack: Codable, Hashable {
 
 extension PlaylistTrack: GRDBRecord {
     
-    static let track = belongsTo(SPTTrack.self)
+    static let track = belongsTo(SPTSimplifiedTrack.self)
     
     public static var databaseTableName: String { "playlistTrack" }
     
@@ -35,10 +36,10 @@ extension PlaylistTrack: GRDBRecord {
             try db.create(table: databaseTableName) { table in
                 table.column("playlistId", .text)
                     .notNull()
-                    .references(SPTPlaylist.databaseTableName, onDelete: .cascade)
+                    .references(SPTSimplifiedPlaylist.databaseTableName, onDelete: .cascade)
                 table.column("trackId", .text)
                     .notNull()
-                    .references(SPTTrack.databaseTableName, onDelete: .cascade)
+                    .references(SPTSimplifiedTrack.databaseTableName, onDelete: .cascade)
                 table.column("position", .integer)
                     .notNull()
                 table.column("addedDate", .date)
@@ -48,14 +49,14 @@ extension PlaylistTrack: GRDBRecord {
     }
 }
 
-extension SPTPlaylist {
+extension SPTSimplifiedPlaylist {
     private static let playlistTracks = hasMany(PlaylistTrack.self)
-    private static let tracks = hasMany(SPTTrack.self,
+    private static let tracks = hasMany(SPTSimplifiedTrack.self,
                                         through: playlistTracks.order(Column("position")),
                                         using: PlaylistTrack.track)
     
     /// Request for fetching associated tracks from the local database.
-    public var playlistTracks: QueryInterfaceRequest<SPTTrack> {
+    public var playlistTracks: QueryInterfaceRequest<SPTSimplifiedTrack> {
         request(for: Self.tracks)
     }
 }

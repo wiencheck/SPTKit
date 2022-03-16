@@ -20,7 +20,7 @@ public struct SPTPlayback: Codable {
     
     public let item: SPTTrack
     
-    // - MARK: Coding keys
+    // MARK: Coding keys
     private enum CodingKeys: String, CodingKey {
         case context, timestamp, item
         case progressMs = "progress_ms"
@@ -39,7 +39,7 @@ public extension SPTPlayback {
         
         let uri: String
         
-        // - MARK: Coding keys
+        // MARK: Coding keys
         private enum CodingKeys: String, CodingKey {
             case externalUrls = "external_urls"
             case url = "href"

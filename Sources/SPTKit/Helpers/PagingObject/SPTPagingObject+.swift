@@ -87,7 +87,7 @@ public extension SPTPagingObject {
     }
 }
 
-// - MARK: Async/Await support.
+// MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 fileprivate extension SPTPagingObject {
     func getPage(url: URL?) async throws -> SPTPagingObject<T> {
@@ -100,7 +100,7 @@ fileprivate extension SPTPagingObject {
     }
 }
 
-// - MARK: Async/Await support.
+// MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPTPagingObject {
     func getPrevious() async throws -> SPTPagingObject<T> {

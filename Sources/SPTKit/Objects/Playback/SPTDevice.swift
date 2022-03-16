@@ -22,7 +22,7 @@ public struct SPTDevice: Codable {
     
     public let volumePercent: Int
     
-    // - MARK: Coding keys
+    // MARK: Coding keys
     private enum CodingKeys: String, CodingKey {
         case id, name, type
         case isActive = "is_active"
