@@ -77,6 +77,18 @@ public class SPTSimplifiedTrack: SPTBaseObject {
      */
     public let isLocal: Bool
     
+    /**
+     Names of artists associated with the track.
+     */
+    public let artistNames: [String]
+    
+    /**
+     Title of the album the song appears on.
+     
+     This value is only set in full track objects, but can be set externally.
+     */
+    public var albumTitle: String?
+    
     public override var description: String {
         return """
            Track: \"\(name)\", artists: \(artists), uri: \(uri)
@@ -95,6 +107,10 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         case previewURL = "preview_url"
         case trackNumber = "track_number"
         case isLocal = "is_local"
+        
+        case album
+        case albumTitle = "album_title"
+        case artistNames = "artist_names"
     }
     
     required init(from decoder: Decoder) throws {
@@ -111,6 +127,19 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         previewURL = try container.decodeIfPresent(URL.self, forKey: .previewURL)
         trackNumber = try container.decode(Int.self, forKey: .trackNumber)
         isLocal = try container.decode(Bool.self, forKey: .isLocal)
+        
+        // Decode custom properties
+        if let albumTitle = try container.decodeIfPresent(String.self, forKey: .albumTitle) {
+            self.albumTitle = albumTitle
+        }
+        else if let album = try container.decodeIfPresent(SPTSimplifiedAlbum.self, forKey: .album) {
+            self.albumTitle = album.name
+        }
+        if let artistNamesString = try container.decodeIfPresent(String.self, forKey: .artistNames) {
+            artistNames = artistNamesString.components(separatedBy: ";")
+        } else {
+            artistNames = []
+        }
         
         try super.init(from: decoder)
     }
@@ -130,6 +159,14 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         try container.encode(trackNumber, forKey: .trackNumber)
         try container.encode(isLocal, forKey: .isLocal)
         
+        // Encode custom properties
+        try container.encodeIfPresent(albumTitle, forKey: .albumTitle)
+        
+        let artistNamesString = artistNames.joined(separator: ";")
+        if !artistNamesString.isEmpty {
+            try container.encode(artistNamesString, forKey: .artistNames)
+        }
+        
         try super.encode(to: encoder)
     }
     
@@ -147,6 +184,9 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         public static let previewURL = Column(CodingKeys.previewURL)
         public static let trackNumber = Column(CodingKeys.trackNumber)
         public static let isLocal = Column(CodingKeys.isLocal)
+        
+        public static let albumTitle = Column(CodingKeys.albumTitle)
+        public static let artistNames = Column(CodingKeys.artistNames)
     }
     
     public override class var databaseTableName: String { "track" }
@@ -165,6 +205,9 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         table.column(CodingKeys.previewURL.stringValue, .text)
         table.column(CodingKeys.trackNumber.stringValue, .integer).notNull()
         table.column(CodingKeys.isLocal.stringValue, .boolean).notNull()
+        
+        table.column(CodingKeys.albumTitle.stringValue, .text)
+        table.column(CodingKeys.artistNames.stringValue, .text)
     }
 }
 

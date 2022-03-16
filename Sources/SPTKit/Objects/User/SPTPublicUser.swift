@@ -20,6 +20,7 @@ import Foundation
 
 /// Public User object.
 public class SPTPublicUser: SPTBaseObject {
+    
     /**
      The name displayed on the user’s profile. null if not available.
      */

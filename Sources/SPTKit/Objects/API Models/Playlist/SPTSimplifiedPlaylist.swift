@@ -63,6 +63,8 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
      */
     public let total: Int
     
+    public let ownerName: String?
+    
     public override var description: String {
         return """
            Playlist: \"\(name)\", total: \(total), uri: \(uri)
@@ -76,6 +78,8 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
         case descriptionText = "description"
         case snapshotId = "snapshot_id"
         case isPublic = "public"
+        
+        case ownerName = "owner_name"
     }
     
     private enum TracksCodingKeys: String, CodingKey {
@@ -96,6 +100,9 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
         let subcontainer = try container.nestedContainer(keyedBy: TracksCodingKeys.self, forKey: .tracks)
         total = try subcontainer.decode(Int.self, forKey: .total)
         
+        // Decode custom properties
+        ownerName = owner.displayName
+        
         try super.init(from: decoder)
     }
 
@@ -109,6 +116,9 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
         try container.encode(descriptionText, forKey: .descriptionText)
         try container.encode(snapshotId, forKey: .snapshotId)
         try container.encode(isPublic, forKey: .isPublic)
+        
+        // Encode custom properties
+        try container.encodeIfPresent(ownerName, forKey: .ownerName)
         
         try super.encode(to: encoder)
     }
@@ -124,6 +134,8 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
         public static let snapshotId = Column(CodingKeys.snapshotId)
         public static let isPublic = Column(CodingKeys.isPublic)
         public static let total = Column(TracksCodingKeys.total)
+        
+        public static let ownerName = Column(CodingKeys.ownerName)
     }
     
     public override class var databaseTableName: String { "playlist" }
@@ -139,6 +151,8 @@ public class SPTSimplifiedPlaylist: SPTBaseObject {
         table.column(CodingKeys.snapshotId.stringValue, .text).notNull()
         table.column(CodingKeys.isPublic.stringValue, .boolean)
         table.column(TracksCodingKeys.total.stringValue, .integer).notNull()
+        
+        table.column(CodingKeys.ownerName.stringValue, .text)
     }
 }
 

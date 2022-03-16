@@ -62,6 +62,11 @@ public class SPTSimplifiedAlbum: SPTBaseObject {
      */
     public let releaseDate: Date?
     
+    /**
+     Names of artists associated with the album.
+     */
+    public let artistNames: [String]
+    
     public override var description: String {
         return """
            Album: \"\(name)\", artists: \(artists), uri: \(uri)
@@ -76,10 +81,13 @@ public class SPTSimplifiedAlbum: SPTBaseObject {
         case availableMarkets = "available_markets"
         case releaseDatePrecision = "release_date_precision"
         case releaseDate = "release_date"
+        
+        case artistNames = "artist_names"
     }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         albumGroup = try container.decodeIfPresent(AlbumGroup.self, forKey: .albumGroup)
         albumType = try container.decodeIfPresent(AlbumType.self, forKey: .albumType) ?? .album
         artists = try container.decode([SPTSimplifiedArtist].self, forKey: .artists)
@@ -93,6 +101,13 @@ public class SPTSimplifiedAlbum: SPTBaseObject {
         } else {
             let dateString = try container.decode(String.self, forKey: .releaseDate)
             releaseDate = SPTDateFormatter.shared.date(from: dateString, precision: releaseDatePrecision)
+        }
+        
+        // Decode custom properties
+        if let artistNamesString = try container.decodeIfPresent(String.self, forKey: .artistNames) {
+            artistNames = artistNamesString.components(separatedBy: ";")
+        } else {
+            artistNames = []
         }
 
         try super.init(from: decoder)
@@ -110,6 +125,12 @@ public class SPTSimplifiedAlbum: SPTBaseObject {
         try container.encode(releaseDatePrecision, forKey: .releaseDatePrecision)
         try container.encode(releaseDate, forKey: .releaseDate)
         
+        // Encode custom properties
+        let artistNamesString = artistNames.joined(separator: ";")
+        if !artistNamesString.isEmpty {
+            try container.encode(artistNamesString, forKey: .artistNames)
+        }
+        
         try super.encode(to: encoder)
     }
     
@@ -123,6 +144,8 @@ public class SPTSimplifiedAlbum: SPTBaseObject {
         public static let images = Column(CodingKeys.images)
         public static let name = Column(CodingKeys.name)
         public static let releaseDatePrecision = Column(CodingKeys.releaseDatePrecision)
+        
+        public static let artistNames = Column(CodingKeys.artistNames)
     }
     
     public override class var databaseTableName: String { "album" }
@@ -138,6 +161,8 @@ public class SPTSimplifiedAlbum: SPTBaseObject {
         table.column(CodingKeys.name.stringValue, .text).notNull()
         table.column(CodingKeys.releaseDatePrecision.stringValue, .text).notNull()
         table.column(CodingKeys.releaseDate.stringValue, .date).notNull()
+        
+        table.column(CodingKeys.artistNames.stringValue, .text)
     }
 }
 
