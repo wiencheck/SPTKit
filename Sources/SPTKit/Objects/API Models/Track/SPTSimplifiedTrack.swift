@@ -83,11 +83,18 @@ public class SPTSimplifiedTrack: SPTBaseObject {
     public let artistNames: [String]
     
     /**
+     The album on which the track appears
+     
+     - Warning: This value is empty in simplified track objects.
+     */
+    public let album: SPTSimplifiedAlbum?
+    
+    /**
      Title of the album the song appears on.
      
-     This value is only set in full track objects, but can be set externally.
+     - Warning: This value is empty in simplified track objects.
      */
-    public var albumTitle: String?
+    public let albumTitle: String?
     
     public override var description: String {
         return """
@@ -129,8 +136,11 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         isLocal = try container.decode(Bool.self, forKey: .isLocal)
         
         // Decode custom properties
-        if let albumTitle = try container.decodeIfPresent(String.self, forKey: .albumTitle) {
-            self.albumTitle = albumTitle
+        album = try container.decodeIfPresent(SPTSimplifiedAlbum.self, forKey: .album)
+        if let album = album {
+            albumTitle = album.name
+        } else {
+            albumTitle = try container.decodeIfPresent(String.self, forKey: .albumTitle)
         }
         artistNames = artists.map(\.name)
         
@@ -153,6 +163,7 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         try container.encode(isLocal, forKey: .isLocal)
         
         // Encode custom properties
+        try container.encode(album, forKey: .album)
         try container.encodeIfPresent(albumTitle, forKey: .albumTitle)
         
         let artistNamesString = artistNames.joined(separator: ";")
@@ -199,6 +210,7 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         table.column(CodingKeys.trackNumber.stringValue, .integer).notNull()
         table.column(CodingKeys.isLocal.stringValue, .boolean).notNull()
         
+        table.column(CodingKeys.album.stringValue, .blob)
         table.column(CodingKeys.albumTitle.stringValue, .text)
         table.column(CodingKeys.artistNames.stringValue, .text)
     }
