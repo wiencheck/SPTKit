@@ -19,24 +19,24 @@
 /**
  Container class for encapsuling objects included in search response from Spotify service.
  */
-public class SPTSearchResponse: Codable {
+public class SPTSearchResponse: Decodable {
     /**
      Simplified track objects included in the response, wrapped in paging object.
      */
-    public let tracks: SPTPagingObject<SPTTrack>?
+    public let tracks: SPTPagingObject<SPTSimplifiedTrack>?
     
     /**
      Simplified album objects included in the response, wrapped in paging object.
      */
-    public let albums: SPTPagingObject<SPTAlbum>?
+    public let albums: SPTPagingObject<SPTSimplifiedAlbum>?
     
     /**
      Simplified artist objects included in the response, wrapped in paging object.
      */
-    public let artists: SPTPagingObject<SPTArtist>?
+    public let artists: SPTPagingObject<SPTSimplifiedArtist>?
     
     /**
      Simplified playlist objects included in the response, wrapped in paging object.
      */
-    public let playlists: SPTPagingObject<SPTPlaylist>?
+    public let playlists: SPTPagingObject<SPTSimplifiedPlaylist>?
 }

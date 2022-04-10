@@ -95,6 +95,14 @@ public class SPTBaseObject: Codable, GRDBRecord {
             try db.create(table: databaseTableName, body: defineColumns)
         })
     }
+    
+    public static func databaseJSONDecoder(for column: String) -> JSONDecoder {
+        SPTJSONDecoder()
+    }
+    
+    public static func databaseJSONEncoder(for column: String) -> JSONEncoder {
+        SPTJSONEncoder()
+    }
 }
 
 // MARK: `Equatable` conformance

@@ -17,7 +17,7 @@
 // THE SOFTWARE.
 
 import Foundation
-public struct SPTError: Codable {
+public struct SPTError: Decodable {
     /**
      The HTTP status code that is also returned in the response header. For further information, see https://developer.spotify.com/documentation/web-api/#response-status-codes.
      */

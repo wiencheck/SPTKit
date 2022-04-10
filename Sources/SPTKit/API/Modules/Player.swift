@@ -99,11 +99,7 @@ public extension SPT.Player {
     }
     
     static func getCurrentlyPlayingTrack(completion: @escaping (Result<SPTPlayback, Error>) -> Void) {
-        
-        let queryParams = [
-            "market": SPT.countryCode ?? "en"
-        ]
-        SPT.call(method: Method.currentTrack, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+        SPT.call(method: Method.currentTrack, completion: completion)
     }
     
     static func seekToPosition(positionMs: Int, deviceId: String? = nil, completion: ((Error?) -> Void)?) {
@@ -169,11 +165,7 @@ public extension SPT.Player {
     }
     
     static func getCurrentlyPlayingTrack() async throws -> SPTPlayback {
-        
-        let queryParams = [
-            "market": SPT.countryCode ?? "en"
-        ]
-        return try await SPT.call(method: Method.currentTrack, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await SPT.call(method: Method.currentTrack)
     }
     
     static func seekToPosition(positionMs: Int, deviceId: String? = nil) async throws {

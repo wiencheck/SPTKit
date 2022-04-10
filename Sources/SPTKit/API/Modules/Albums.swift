@@ -51,12 +51,8 @@ public extension SPT.Albums {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getAlbum(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTAlbum, Error>) -> Void) {
-        
-        var queryParams = [String: String]()
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
-        SPT.call(method: Method.album, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+    static func getAlbum(id: String, completion: @escaping (Result<SPTAlbum, Error>) -> Void) {
+        SPT.call(method: Method.album, pathParam: id, completion: completion)
     }
     
     /**
@@ -70,14 +66,12 @@ public extension SPT.Albums {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedTrack>, Error>) -> Void) {
+    static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedTrack>, Error>) -> Void) {
         
-        var queryParams = [
+        let queryParams = [
             "limit": String(limit),
             "offset": String(offset)
         ]
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
         SPT.call(method: Method.albumTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
     }
     
@@ -89,16 +83,14 @@ public extension SPT.Albums {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getSeveralAlbums(ids: [String], market: String? = SPT.countryCode, completion: @escaping (Result<[SPTAlbum], Error>) -> Void) {
+    static func getSeveralAlbums(ids: [String], completion: @escaping (Result<[SPTAlbum], Error>) -> Void) {
         
         if ids.count > 50 {
             print("*** Warning, maximum number of requested ids is 20, but \(ids.count) have been passed to the method.")
         }
-        var queryParams = [
+        let queryParams = [
             "ids": ids.joined(separator: ",")
         ]
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
         SPT.call(method: Method.severalAlbums, pathParam: nil, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTAlbum>, Error>) in
             switch result {
             case .success(let root):
@@ -122,12 +114,8 @@ public extension SPT.Albums {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getAlbum(id: String, market: String? = SPT.countryCode) async throws -> SPTAlbum {
-        
-        var queryParams = [String: String]()
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
-        return try await SPT.call(method: Method.album, pathParam: id, queryParams: queryParams, body: nil)
+    static func getAlbum(id: String) async throws -> SPTAlbum {
+        return try await SPT.call(method: Method.album, pathParam: id)
     }
     
     /**
@@ -141,14 +129,12 @@ public extension SPT.Albums {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTSimplifiedTrack> {
+    static func getAlbumTracks(id: String, limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTSimplifiedTrack> {
         
-        var queryParams = [
+        let queryParams = [
             "limit": String(limit),
             "offset": String(offset)
         ]
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
         return try await SPT.call(method: Method.albumTracks, pathParam: id, queryParams: queryParams, body: nil)
     }
     
@@ -160,16 +146,14 @@ public extension SPT.Albums {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getSeveralAlbums(ids: [String], market: String? = SPT.countryCode) async throws -> [SPTAlbum] {
+    static func getSeveralAlbums(ids: [String]) async throws -> [SPTAlbum] {
         
         if ids.count > 50 {
             print("*** Warning, maximum number of requested ids is 20, but \(ids.count) have been passed to the method.")
         }
-        var queryParams = [
+        let queryParams = [
             "ids": ids.joined(separator: ",")
         ]
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
         let nested = try await SPT.call(method: Method.severalAlbums, pathParam: nil, queryParams: queryParams, body: nil) as Nested<SPTAlbum>
         return nested.items
     }

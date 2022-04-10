@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SPTPlayback: Codable {
+public struct SPTPlayback: Decodable {
     public let context: Context
     
     public let timestamp: Int
@@ -30,7 +30,7 @@ public struct SPTPlayback: Codable {
 }
 
 public extension SPTPlayback {
-    struct Context: Codable {
+    struct Context: Decodable {
         let externalUrls: [URL]
         
         let url: URL

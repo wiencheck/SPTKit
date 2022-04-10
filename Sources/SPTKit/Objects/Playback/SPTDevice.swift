@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SPTDevice: Codable {
+public struct SPTDevice: Decodable {
     public let id: String
     
     public let isActive: Bool

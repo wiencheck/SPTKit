@@ -74,26 +74,19 @@ public extension SPT.Playlists {
      Get a playlist owned by a Spotify user.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
      */
-    static func getPlaylist(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
-        
-        var queryParams = [String: String]()
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
-        SPT.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
+    static func getPlaylist(id: String, completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
+        SPT.call(method: Method.getPlaylist, pathParam: id, completion: completion)
     }
     
     /**
      Get full details of the tracks or episodes of a playlist owned by a Spotify user.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlists-tracks/)
      */
-    static func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTPlaylistTrack>, Error>) -> Void) {
-        
-        var queryParams = [
+    static func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTPlaylistTrack>, Error>) -> Void) {
+        let queryParams = [
             "limit": String(limit),
             "offset": String(offset)
         ]
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
         SPT.call(method: Method.getPlaylistTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
     }
     
@@ -156,26 +149,20 @@ public extension SPT.Playlists {
      Get a playlist owned by a Spotify user.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
      */
-    static func getPlaylist(id: String, market: String? = SPT.countryCode) async throws -> SPTPlaylist {
-        
-        var queryParams = [String: String]()
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
-        return try await SPT.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil)
+    static func getPlaylist(id: String) async throws -> SPTPlaylist {
+        return try await SPT.call(method: Method.getPlaylist, pathParam: id)
     }
     
     /**
      Get full details of the tracks or episodes of a playlist owned by a Spotify user.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlists-tracks/)
      */
-    static func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTPlaylistTrack> {
+    static func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTPlaylistTrack> {
         
-        var queryParams = [
+        let queryParams = [
             "limit": String(limit),
             "offset": String(offset)
         ]
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
         return try await SPT.call(method: Method.getPlaylistTracks, pathParam: id, queryParams: queryParams, body: nil)
     }
     

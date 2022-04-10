@@ -73,15 +73,12 @@ public extension SPT.Library {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedAlbum>, Error>) -> Void) {
+    static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSavedAlbum>, Error>) -> Void) {
         
-        var queryParams = [
+        let queryParams = [
             "limit": String(limit),
             "offset": String(offset),
         ]
-        if let market = market {
-            queryParams["market"] = market
-        }
         SPT.call(method: Method.savedAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
     }
     
@@ -94,16 +91,13 @@ public extension SPT.Library {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedTrack>, Error>) -> Void) {
+    static func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSavedTrack>, Error>) -> Void) {
         
-        var queryParams = [
+        let queryParams = [
             "limit": String(limit),
             "offset": String(offset),
         ]
-        if let market = market {
-            queryParams["market"] = market
-        }
-        SPT.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+        SPT.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, completion: completion)
     }
     
     /**
@@ -240,16 +234,13 @@ public extension SPT.Library {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTSavedAlbum> {
+    static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTSavedAlbum> {
         
-        var queryParams = [
+        let queryParams = [
             "limit": String(limit),
             "offset": String(offset),
         ]
-        if let market = market {
-            queryParams["market"] = market
-        }
-        return try await SPT.call(method: Method.savedAlbums, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await SPT.call(method: Method.savedAlbums, queryParams: queryParams)
     }
     
     /**
@@ -261,16 +252,13 @@ public extension SPT.Library {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTSavedTrack> {
+    static func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTSavedTrack> {
         
-        var queryParams = [
+        let queryParams = [
             "limit": String(limit),
             "offset": String(offset),
         ]
-        if let market = market {
-            queryParams["market"] = market
-        }
-        return try await SPT.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await SPT.call(method: Method.savedTracks, queryParams: queryParams)
     }
     
     /**

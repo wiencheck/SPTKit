@@ -49,3 +49,13 @@ final class SPTJSONDecoder: JSONDecoder {
         }
     }
 }
+
+final class SPTJSONEncoder: JSONEncoder {
+    
+    override init() {
+        super.init()
+        outputFormatting = .sortedKeys
+        dateEncodingStrategy = .iso8601
+    }
+    
+}

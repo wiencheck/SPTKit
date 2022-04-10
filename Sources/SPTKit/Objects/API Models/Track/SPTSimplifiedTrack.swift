@@ -87,14 +87,18 @@ public class SPTSimplifiedTrack: SPTBaseObject {
      
      - Warning: This value is empty in simplified track objects.
      */
-    public let album: SPTSimplifiedAlbum?
+    public var album: SPTSimplifiedAlbum? {
+        didSet {
+            albumTitle = album?.name
+        }
+    }
     
     /**
      Title of the album the song appears on.
      
      - Warning: This value is empty in simplified track objects.
      */
-    public let albumTitle: String?
+    public private(set) var albumTitle: String?
     
     public override var description: String {
         return """
@@ -163,7 +167,7 @@ public class SPTSimplifiedTrack: SPTBaseObject {
         try container.encode(isLocal, forKey: .isLocal)
         
         // Encode custom properties
-        try container.encode(album, forKey: .album)
+        try container.encodeIfPresent(album, forKey: .album)
         try container.encodeIfPresent(albumTitle, forKey: .albumTitle)
         
         let artistNamesString = artistNames.joined(separator: ";")
