@@ -57,6 +57,7 @@ public class SPTBaseObject: Codable {
             \(type), id: \(id)
         """
     }
+    
 }
 
 // MARK: `Equatable` conformance

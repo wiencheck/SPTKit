@@ -12,8 +12,8 @@ import SPTKit
 
 class PlaylistsViewController: UITableViewController {
         
-    var newPlaylists: [SPTSimplifiedPlaylist] = []
-    var playlists: [SPTSimplifiedPlaylist] = []
+    var newPlaylists: [SPTPlaylist] = []
+    var playlists: [SPTPlaylist] = []
     private var selectedIndexPath: IndexPath?
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,7 +45,7 @@ class PlaylistsViewController: UITableViewController {
         }
     }
     
-    func handlePage(_ page: SPTPagingObject<SPTSimplifiedPlaylist>, completion: ((Error?) -> Void)?) {
+    func handlePage(_ page: SPTPagingObject<SPTPlaylist>, completion: ((Error?) -> Void)?) {
         
         print("Page offset: \(page.offset), items: \(type(of: page.items))")
         newPlaylists.append(contentsOf: page.items)

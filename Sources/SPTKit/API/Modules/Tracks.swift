@@ -40,7 +40,7 @@ public extension SPT.Tracks {
      */
     static func getTrack(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTTrack, Error>) -> Void) {
         
-        var queryParams = [String: String]()
+        var queryParams: [String: String] = [:]
         queryParams.updateValueIfExists(market, forKey: "market")
         
         SPT.call(method: Method.severalTracks, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
@@ -75,7 +75,7 @@ public extension SPT.Tracks {
      */
     static func getTrack(id: String, market: String? = SPT.countryCode) async throws -> SPTTrack {
         
-        var queryParams = [String: String]()
+        var queryParams: [String: String] = [:]
         queryParams.updateValueIfExists(market, forKey: "market")
         
         return try await SPT.call(method: Method.severalTracks, pathParam: id, queryParams: queryParams, body: nil)

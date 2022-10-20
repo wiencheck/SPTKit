@@ -76,7 +76,7 @@ public extension SPT.Playlists {
      */
     static func getPlaylist(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
         
-        var queryParams = [String: String]()
+        var queryParams: [String: String] = [:]
         queryParams.updateValueIfExists(market, forKey: "market")
         
         SPT.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
@@ -87,7 +87,6 @@ public extension SPT.Playlists {
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlists-tracks/)
      */
     static func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTPlaylistTrack>, Error>) -> Void) {
-        
         var queryParams = [
             "limit": String(limit),
             "offset": String(offset)
@@ -107,7 +106,6 @@ public extension SPT.Playlists {
      - completion: Handler called after completing the request.
      */
     static func addTracksToPlaylist(id: String, uris: [String], position: Int?, completion: ((Error?) -> Void)?) {
-        
         var queryParams = [
             "uris": uris.joined(separator: ",")
         ]
@@ -132,7 +130,6 @@ public extension SPT.Playlists {
      - completion: Handler called after completing the request.
      */
     static func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]], completion: ((Error?) -> Void)?) {
-        
         let queryParams = [
             "uris": uris.joined(separator: ",")
         ]
@@ -157,11 +154,12 @@ public extension SPT.Playlists {
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
      */
     static func getPlaylist(id: String, market: String? = SPT.countryCode) async throws -> SPTPlaylist {
-        
-        var queryParams = [String: String]()
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
-        return try await SPT.call(method: Method.getPlaylist, pathParam: id, queryParams: queryParams, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getPlaylist(id: id,
+                             market: market) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     /**
@@ -169,14 +167,14 @@ public extension SPT.Playlists {
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlists-tracks/)
      */
     static func getPlaylistTracks(id: String, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTPlaylistTrack> {
-        
-        var queryParams = [
-            "limit": String(limit),
-            "offset": String(offset)
-        ]
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
-        return try await SPT.call(method: Method.getPlaylistTracks, pathParam: id, queryParams: queryParams, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getPlaylistTracks(id: id,
+                                   limit: limit,
+                                   offset: offset,
+                                   market: market) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     /**
@@ -189,19 +187,16 @@ public extension SPT.Playlists {
      - completion: Handler called after completing the request.
      */
     static func addTracksToPlaylist(id: String, uris: [String], position: Int?) async throws {
-        
-        var queryParams = [
-            "uris": uris.joined(separator: ",")
-        ]
-        if let position = position {
-            queryParams.updateValueIfExists(String(position), forKey: "position")
+        return try await withCheckedThrowingContinuation { continuation in
+            self.addTracksToPlaylist(id: id,
+                                     uris: uris,
+                                     position: position) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
+            }
         }
-        let values = uris.map { uri in
-            ["uri": uri]
-        }
-        let dict = ["tracks": values]
-        
-        try await SPT.call(method: Method.addItems, pathParam: id, queryParams: queryParams, body: dict)
     }
     
     /**
@@ -214,19 +209,16 @@ public extension SPT.Playlists {
      - completion: Handler called after completing the request.
      */
     static func removeTracksFromPlaylist(id: String, uris: [String], positions: [[Int]]) async throws {
-        
-        let queryParams = [
-            "uris": uris.joined(separator: ",")
-        ]
-        let values = uris.enumerated().map { (idx: Int, uri: String) -> [String: Any] in
-            var value: [String: Any] = ["uri": uri]
-            if !positions.isEmpty {
-                value.updateValueIfExists(positions[idx], forKey: "positions")
+        return try await withCheckedThrowingContinuation { continuation in
+            self.removeTracksFromPlaylist(id: id,
+                                     uris: uris,
+                                     positions: positions) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
             }
-            return value
         }
-        let dict = ["tracks": values]
-        
-        try await SPT.call(method: Method.removeItems, pathParam: id, queryParams: queryParams, body: dict)
     }
+    
 }

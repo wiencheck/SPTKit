@@ -75,7 +75,7 @@ public extension SPT.Artists {
      - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
      - completion: Handler called on success or failure.
      */
-    static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTSimplifiedAlbum>, Error>) -> Void) {
+    static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTAlbum>, Error>) -> Void) {
         
         if id.isEmpty {
             completion(.failure(SPTError.emptyParameter))
@@ -110,7 +110,7 @@ public extension SPT.Artists {
      */
     static func getArtistTopTracks(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
         
-        var queryParams = [String: String]()
+        var queryParams: [String: String] = [:]
         queryParams.updateValueIfExists(market, forKey: "country")
         
         SPT.call(method: Method.topTracks, pathParam: id, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTTrack>, Error>) in
@@ -227,7 +227,7 @@ public extension SPT.Artists {
      */
     static func getArtistTopTracks(id: String, market: String? = SPT.countryCode) async throws -> [SPTTrack] {
         
-        var queryParams = [String: String]()
+        var queryParams: [String: String] = [:]
         queryParams.updateValueIfExists(market, forKey: "country")
         
         let nested: Nested<SPTTrack> = try await SPT.call(method: Method.topTracks, pathParam: id, queryParams: queryParams, body: nil)

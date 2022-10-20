@@ -43,6 +43,11 @@ public struct SPT {
     @available(*, unavailable)
     init() {}
     
+}
+
+// MARK: Internal methods
+extension SPT {
+    
     private static func forgeRequest(for method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) -> URLRequest? {
         
         guard let token = SPT.authorizationToken, !token.isEmpty else {
@@ -63,31 +68,36 @@ public struct SPT {
         }
         return request
     }
-}
-
-// MARK: Internal methods
-extension SPT {
-    static func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
-        
+    
+    @discardableResult
+    static func call<T>(method: SPTMethod,
+                        pathParam: String? = nil,
+                        queryParams: [String: String]? = nil,
+                        body: [String: Any]? = nil,
+                        completion: @escaping (Result<T, Error>) -> Void) -> URLSessionDataTask? where T: Decodable {
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion(.failure(SPTError.badRequest))
-            return
+            return nil
         }
-        perform(request: request, completion: completion)
+        return perform(request: request, completion: completion)
     }
     
-    static func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?, completion: ((Error?) -> Void)?) {
-        
+    @discardableResult
+    static func call(method: SPTMethod,
+                     pathParam: String? = nil,
+                     queryParams: [String: String]? = nil,
+                     body: [String: Any]? = nil,
+                     completion: ((Error?) -> Void)?) -> URLSessionDataTask? {
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             completion?(SPTError.badRequest)
-            return
+            return nil
         }
-        perform(request: request, completion: completion)
+        return perform(request: request, completion: completion)
     }
     
-    static func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) where T: Decodable {
-        
-        session.dataTask(with: request) { data, response, error in
+    @discardableResult
+    static func perform<T>(request: URLRequest, completion: @escaping (Result<T, Error>) -> Void) -> URLSessionDataTask where T: Decodable {
+        let task = session.dataTask(with: request) { data, response, error in
             // Check for any connection errors
             if let error = error {
                 completion(.failure(error))
@@ -117,12 +127,15 @@ extension SPT {
             } catch let decodingError {
                 completion(.failure(decodingError))
             }
-        }.resume()
+        }
+        defer { task.resume() }
+        
+        return task
     }
     
-    static func perform(request: URLRequest, completion: ((Error?) -> Void)?) {
-        
-        session.dataTask(with: request) { data, response, error in
+    @discardableResult
+    static func perform(request: URLRequest, completion: ((Error?) -> Void)?) -> URLSessionDataTask {
+        let task = session.dataTask(with: request) { data, response, error in
             // Check any connection errors
             if let error = error {
                 completion?(error)
@@ -148,12 +161,15 @@ extension SPT {
             } catch let decodingError {
                 completion?(decodingError)
             }
-        }.resume()
+        }
+        defer { task.resume() }
+        
+        return task
     }
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+@available(macOS 12.0, iOS 13.0, watchOS 8.0, tvOS 13.0, *)
 extension SPT {
     static func perform<T>(request: URLRequest) async throws -> T where T: Decodable {
         return try await withCheckedThrowingContinuation { continuation in
@@ -177,21 +193,27 @@ extension SPT {
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+@available(macOS 12.0, iOS 13.0, watchOS 8.0, tvOS 13.0, *)
 extension SPT {
-    static func call<T>(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) async throws -> T where T: Decodable {
-        
+    
+    static func call<T>(method: SPTMethod,
+                        pathParam: String? = nil,
+                        queryParams: [String: String]? = nil,
+                        body: [String: Any]? = nil) async throws -> T where T: Decodable {
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             throw SPTError.badRequest
         }
         return try await perform(request: request)
     }
     
-    static func call(method: SPTMethod, pathParam: String?, queryParams: [String: String]?, body: [String: Any]?) async throws {
-        
+    static func call(method: SPTMethod,
+                     pathParam: String? = nil,
+                     queryParams: [String: String]? = nil,
+                     body: [String: Any]? = nil) async throws {
         guard let request = forgeRequest(for: method, pathParam: pathParam, queryParams: queryParams, body: body) else {
             throw SPTError.badRequest
         }
         try await perform(request: request)
     }
+    
 }
