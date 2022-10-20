@@ -11,7 +11,7 @@ import SPTKit
 
 class PlaylistTracksViewController: UITableViewController {
     
-    var playlistId: String!
+    var playlistID: String!
     private var playlist: SPTPlaylist!
     
     private var tracks: [SPTTrack] = []
@@ -22,7 +22,7 @@ class PlaylistTracksViewController: UITableViewController {
         guard playlist == nil else { return }
         
         /* Get full details about playlist */
-        SPT.Playlists.getPlaylist(id: playlistId) { result in
+        SPT.Playlists.getPlaylist(id: playlistID) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let playlist):
@@ -72,8 +72,8 @@ class PlaylistTracksViewController: UITableViewController {
     
     private func fetchPlaylistTracks(completion: @escaping (Error?) -> Void) {
         func fetchTracks(from playlist: SPTPlaylist, completion: @escaping (Error?) -> Void) {
-            let playlistId = playlist.id
-            SPT.Playlists.getPlaylistTracks(id: playlistId) { result in
+            let playlistID = playlist.id
+            SPT.Playlists.getPlaylistTracks(id: playlistID) { result in
                 switch result {
                 case .success(let page):
                     self.handlePage(page, completion: completion)

@@ -36,9 +36,10 @@ public extension SPT.Search {
      Get Spotify Catalog information about albums, artists, playlists, tracks, shows or episodes that match a keyword string.
      Query must not be empty.
      */
-    static func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
+    @discardableResult
+    static func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) -> URLSessionDataTask? {
         if query.isEmpty {
-            return
+            return nil
         }
         
         var queryParams = [
@@ -51,11 +52,15 @@ public extension SPT.Search {
         ]
         queryParams.updateValueIfExists(market, forKey: "market")
         
-        SPT.call(method: Method.search, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+        return SPT.call(method: Method.search,
+                        pathParam: nil,
+                        queryParams: queryParams,
+                        body: nil,
+                        completion: completion)
     }
     
-    static func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) {
-        
+    @discardableResult
+    static func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTSearchResponse, Error>) -> Void) -> URLSessionDataTask? {
         /*
          Field filters: By default, results are returned when a match is found in any field of the target object type. Searches can be made more specific by specifying an album, artist or track field filter. For example: The query q=album:gold%20artist:abba&type=album returns only albums with the text “gold” in the album name and the text “abba” in the artist name.
          */
@@ -63,7 +68,11 @@ public extension SPT.Search {
             $0.key.rawValue + ":" + $0.value
         }.joined(separator: " ")
         
-        search(query: query, types: types, limit: limit, offset: offset, completion: completion)
+        return search(query: query,
+                      types: types,
+                      limit: limit,
+                      offset: offset,
+                      completion: completion)
     }
 }
 
@@ -75,7 +84,6 @@ public extension SPT.Search {
      Query must not be empty.
      */
     static func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTSearchResponse {
-        
         if query.isEmpty {
             throw SPTError.emptyParameter
         }
@@ -90,11 +98,13 @@ public extension SPT.Search {
         ]
         queryParams.updateValueIfExists(market, forKey: "market")
         
-        return try await SPT.call(method: Method.search, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await SPT.call(method: Method.search,
+                                  pathParam: nil,
+                                  queryParams: queryParams,
+                                  body: nil)
     }
     
     static func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTSearchResponse {
-        
         /*
          Field filters: By default, results are returned when a match is found in any field of the target object type. Searches can be made more specific by specifying an album, artist or track field filter. For example: The query q=album:gold%20artist:abba&type=album returns only albums with the text “gold” in the album name and the text “abba” in the artist name.
          */
@@ -102,6 +112,9 @@ public extension SPT.Search {
             $0.key.rawValue + ":" + $0.value
         }.joined(separator: " ")
         
-        return try await search(query: query, types: types, limit: limit, offset: offset)
+        return try await search(query: query,
+                                types: types,
+                                limit: limit,
+                                offset: offset)
     }
 }

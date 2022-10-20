@@ -64,7 +64,7 @@ public class SPTTrack: SPTBaseObject {
     /**
      A link to a 30 second preview (MP3 format) of the track. Can be null
     */
-    public let previewUrl: URL?
+    public let previewURL: URL?
     
     /**
      The number of the track. If an album has several discs, the track number is the number on the specified disc.
@@ -75,10 +75,11 @@ public class SPTTrack: SPTBaseObject {
      Whether or not the track is from a local file.
      */
     public let isLocal: Bool
+    
     /**
      The album on which the track appears
      */
-    public let album: SPTAlbum?
+    public var album: SPTAlbum?
     
     /**
      The popularity of the track. The value will be between 0 and 100, with 100 being the most popular.
@@ -94,7 +95,7 @@ public class SPTTrack: SPTBaseObject {
     }
     
     // MARK: Codable stuff
-    private enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case name, artists, album, popularity
         case availableMarkets = "available_markets"
         case discNumber = "disc_number"
@@ -102,7 +103,7 @@ public class SPTTrack: SPTBaseObject {
         case isExplicit = "is_explicit"
         case isPlayable = "is_playable"
         case linkedFrom = "linked_from"
-        case previewUrl = "preview_url"
+        case previewURL = "preview_url"
         case trackNumber = "track_number"
         case isLocal = "is_local"
     }
@@ -118,7 +119,7 @@ public class SPTTrack: SPTBaseObject {
         isExplicit = try container.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
         isPlayable = try container.decodeIfPresent(Bool.self, forKey: .isPlayable) ?? true
         linkedFrom = try container.decodeIfPresent(SPTLinkedTrack.self, forKey: .linkedFrom)
-        previewUrl = try container.decodeIfPresent(URL.self, forKey: .previewUrl)
+        previewURL = try container.decodeIfPresent(URL.self, forKey: .previewURL)
         trackNumber = try container.decode(Int.self, forKey: .trackNumber)
         isLocal = try container.decode(Bool.self, forKey: .isLocal)
         album = try container.decodeIfPresent(SPTAlbum.self, forKey: .album)
@@ -138,7 +139,7 @@ public class SPTTrack: SPTBaseObject {
         try container.encode(isExplicit, forKey: .isExplicit)
         try container.encode(isPlayable, forKey: .isPlayable)
         try container.encodeIfPresent(linkedFrom, forKey: .linkedFrom)
-        try container.encodeIfPresent(previewUrl, forKey: .previewUrl)
+        try container.encodeIfPresent(previewURL, forKey: .previewURL)
         try container.encode(trackNumber, forKey: .trackNumber)
         try container.encode(isLocal, forKey: .isLocal)
         try container.encodeIfPresent(album, forKey: .album)

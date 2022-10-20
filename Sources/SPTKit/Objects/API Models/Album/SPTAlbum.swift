@@ -93,7 +93,7 @@ public class SPTAlbum: SPTBaseObject {
     }
     
     // MARK: Codable stuff
-    private enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case artists, images, name, copyrights, genres, label, popularity, tracks
         case albumGroup = "album_group"
         case albumType = "album_type"
@@ -102,7 +102,7 @@ public class SPTAlbum: SPTBaseObject {
         case releaseDate = "release_date"
     }
     
-    public required init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         albumGroup = try container.decodeIfPresent(AlbumGroup.self, forKey: .albumGroup)

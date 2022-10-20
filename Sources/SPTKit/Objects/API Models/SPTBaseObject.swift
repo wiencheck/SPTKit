@@ -45,7 +45,7 @@ public class SPTBaseObject: Codable {
     public let externalURLs: [String: URL]
     
     // MARK: Codable stuff
-    private enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case type, uri, id
         case url = "href"
         case externalURLs = "external_urls"

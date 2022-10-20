@@ -53,11 +53,11 @@ public class SPTArtist: SPTBaseObject {
     }
     
     // MARK: Codable stuff
-    private enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case name, followers, genres, images, popularity
     }
     
-    public required init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         name = try container.decode(String.self, forKey: .name)

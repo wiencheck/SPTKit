@@ -63,12 +63,17 @@ public class SPTPlaylist: SPTBaseObject {
     public let total: Int
     
     /**
+     The tracks of the playlist.
+     */
+    public let tracks: SPTPagingObject<SPTPlaylistTrack>?
+    
+    /**
      Information about the followers of the playlist.
      */
     public let followers: SPTFollowers?
     
     // MARK: Codable stuff
-    private enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case images, name, owner, tracks, followers, total
         case isCollaborative = "collaborative"
         case descriptionText = "description"
@@ -98,6 +103,7 @@ public class SPTPlaylist: SPTBaseObject {
             let subcontainer = try container.nestedContainer(keyedBy: TracksCodingKeys.self, forKey: .tracks)
             total = try subcontainer.decode(Int.self, forKey: .total)
         }
+        tracks = try container.decodeIfPresent(SPTPagingObject<SPTPlaylistTrack>.self, forKey: .tracks)
         followers = try container.decodeIfPresent(SPTFollowers.self, forKey: .followers)
         
         try super.init(from: decoder)
@@ -114,10 +120,12 @@ public class SPTPlaylist: SPTBaseObject {
         try container.encode(snapshotId, forKey: .snapshotId)
         try container.encode(isPublic, forKey: .isPublic)
         try container.encode(total, forKey: .total)
+        try container.encodeIfPresent(tracks, forKey: .tracks)
         try container.encodeIfPresent(followers, forKey: .followers)
         
         try super.encode(to: encoder)
     }
+    
 }
 
 extension SPTPlaylist: Nestable {

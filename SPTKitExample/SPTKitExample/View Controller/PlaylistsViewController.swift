@@ -69,7 +69,7 @@ class PlaylistsViewController: UITableViewController {
         
         if let indexPath = selectedIndexPath,
            let destination = segue.destination as? PlaylistTracksViewController {
-            destination.playlistId = playlists[indexPath.row].id
+            destination.playlistID = playlists[indexPath.row].id
         }
     }
 }

@@ -31,7 +31,7 @@ public struct SPTPlayback: Codable {
 
 public extension SPTPlayback {
     struct Context: Codable {
-        let externalUrls: [URL]
+        let externalURLs: [URL]
         
         let url: URL
         
@@ -41,7 +41,7 @@ public extension SPTPlayback {
         
         // - MARK: Coding keys
         private enum CodingKeys: String, CodingKey {
-            case externalUrls = "external_urls"
+            case externalURLs = "external_urls"
             case url = "href"
             case type, uri
         }
