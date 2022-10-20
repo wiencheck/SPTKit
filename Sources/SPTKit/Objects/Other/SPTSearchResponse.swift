@@ -23,20 +23,20 @@ public class SPTSearchResponse: Decodable {
     /**
      Simplified track objects included in the response, wrapped in paging object.
      */
-    public let tracks: SPTPagingObject<SPTSimplifiedTrack>?
+    public let tracks: SPTPagingObject<SPTTrack>?
     
     /**
      Simplified album objects included in the response, wrapped in paging object.
      */
-    public let albums: SPTPagingObject<SPTSimplifiedAlbum>?
+    public let albums: SPTPagingObject<SPTAlbum>?
     
     /**
      Simplified artist objects included in the response, wrapped in paging object.
      */
-    public let artists: SPTPagingObject<SPTSimplifiedArtist>?
+    public let artists: SPTPagingObject<SPTArtist>?
     
     /**
      Simplified playlist objects included in the response, wrapped in paging object.
      */
-    public let playlists: SPTPagingObject<SPTSimplifiedPlaylist>?
+    public let playlists: SPTPagingObject<SPTPlaylist>?
 }

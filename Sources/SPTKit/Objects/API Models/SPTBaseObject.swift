@@ -63,6 +63,7 @@ public class SPTBaseObject: Codable, GRDBRecord {
     }
     
     // MARK: GRDB stuff
+    
     public class Columns {
         public static let type = Column(CodingKeys.type)
         public static let uri = Column(CodingKeys.uri)
@@ -78,7 +79,6 @@ public class SPTBaseObject: Codable, GRDBRecord {
     }
     
     class func defineColumns(onTable table: TableDefinition) {
-        
         table.column(CodingKeys.id.stringValue, .text).notNull()
             .primaryKey()
             .unique(onConflict: .replace)
@@ -89,8 +89,7 @@ public class SPTBaseObject: Codable, GRDBRecord {
     }
     
     public static var migration: Migration {
-        
-        let migrationTitle = "create\(databaseTableName.capitalized)"
+        let migrationTitle = "create_\(databaseTableName)"
         return (migrationTitle, { db in
             try db.create(table: databaseTableName, body: defineColumns)
         })
@@ -103,6 +102,7 @@ public class SPTBaseObject: Codable, GRDBRecord {
     public static func databaseJSONEncoder(for column: String) -> JSONEncoder {
         SPTJSONEncoder()
     }
+    
 }
 
 // MARK: `Equatable` conformance

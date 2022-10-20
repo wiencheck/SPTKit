@@ -17,30 +17,141 @@
 // THE SOFTWARE.
 
 import Foundation
+import GRDB
 
 /// Full Playlist object.
-public class SPTPlaylist: SPTSimplifiedPlaylist {
+public class SPTPlaylist: SPTBaseObject {
+    
+    /**
+     true if the owner allows other users to modify the playlist.
+     */
+    public let isCollaborative: Bool
+    
+    /**
+     The playlist description. Only returned for modified, verified playlists, otherwise null .
+     */
+    public let descriptionText: String?
+    
+    /**
+     Images for the playlist. The array may be empty or contain up to three images. The images are returned by size in descending order. See Working with Playlists.
+     Note: If returned, the source URL for the image ( url ) is temporary and will expire in less than a day.
+     */
+    public let images: [SPTImage]
+    
+    /**
+     The name of the playlist.
+     */
+    public let name: String
+    
+    /**
+     The user who owns the playlist
+     */
+    public let owner: SPTPublicUser
+    
+    /**
+     The playlist’s public/private status: true the playlist is public, false the playlist is private, null the playlist status is not relevant. For more about public/private status, see [Working with Playlists](https://developer.spotify.com/documentation/general/guides/working-with-playlists/).
+     */
+    public let isPublic: Bool?
+    
+    /**
+     The version identifier for the current playlist. Can be supplied in other requests to target a specific playlist version.
+     */
+    public let snapshotId: String
+    
+    /**
+     Number of tracks in the playlist.
+     */
+    public let total: Int
+    
     /**
      Information about the followers of the playlist.
      */
-    public let followers: SPTFollowers
+    public let followers: SPTFollowers?
     
     // MARK: Codable stuff
     private enum CodingKeys: String, CodingKey {
-        case followers
+        case images, name, owner, tracks, followers, total
+        case isCollaborative = "collaborative"
+        case descriptionText = "description"
+        case snapshotId = "snapshot_id"
+        case isPublic = "public"
+    }
+    
+    private enum TracksCodingKeys: String, CodingKey {
+        case total
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        followers = try container.decode(SPTFollowers.self, forKey: .followers)
+        images = try container.decode([SPTImage].self, forKey: .images)
+        name = try container.decode(String.self, forKey: .name)
+        owner = try container.decode(SPTPublicUser.self, forKey: .owner)
+        isCollaborative = try container.decode(Bool.self, forKey: .isCollaborative)
+        descriptionText = try container.decodeIfPresent(String.self, forKey: .descriptionText)
+        snapshotId = try container.decode(String.self, forKey: .snapshotId)
+        isPublic = try container.decodeIfPresent(Bool.self, forKey: .isPublic)
+        
+        if let total = try container.decodeIfPresent(Int.self, forKey: .total) {
+            self.total = total
+        }
+        else {
+            let subcontainer = try container.nestedContainer(keyedBy: TracksCodingKeys.self, forKey: .tracks)
+            total = try subcontainer.decode(Int.self, forKey: .total)
+        }
+        followers = try container.decodeIfPresent(SPTFollowers.self, forKey: .followers)
         
         try super.init(from: decoder)
     }
 
     public override func encode(to encoder: Encoder) throws {
-        // Leaving empty so only values from simplified objects get saved to database.
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(images, forKey: .images)
+        try container.encode(name, forKey: .name)
+        try container.encode(owner, forKey: .owner)
+        try container.encode(isCollaborative, forKey: .isCollaborative)
+        try container.encode(descriptionText, forKey: .descriptionText)
+        try container.encode(snapshotId, forKey: .snapshotId)
+        try container.encode(isPublic, forKey: .isPublic)
+        try container.encode(total, forKey: .total)
+        try container.encodeIfPresent(followers, forKey: .followers)
         
         try super.encode(to: encoder)
+    }
+    
+    // MARK: GRDB
+    
+    public class Columns: SPTBaseObject.Columns {
+        public static let name = Column(CodingKeys.name)
+        public static let isCollaborative = Column(CodingKeys.isCollaborative)
+        public static let owner = Column(CodingKeys.owner)
+        public static let images = Column(CodingKeys.images)
+        public static let descriptionText = Column(CodingKeys.descriptionText)
+        public static let snapshotId = Column(CodingKeys.snapshotId)
+        public static let isPublic = Column(CodingKeys.isPublic)
+        public static let total = Column(TracksCodingKeys.total)
+    }
+    
+    public override class var databaseTableName: String { "playlist" }
+    
+    public override class func defineColumns(onTable table: TableDefinition) {
+        super.defineColumns(onTable: table)
+        
+        table.column(CodingKeys.images.stringValue, .blob).notNull()
+        table.column(CodingKeys.name.stringValue, .text).notNull()
+        table.column(CodingKeys.owner.stringValue, .blob).notNull()
+        table.column(CodingKeys.isCollaborative.stringValue, .boolean).notNull()
+        table.column(CodingKeys.descriptionText.stringValue, .text)
+        table.column(CodingKeys.snapshotId.stringValue, .text).notNull()
+        table.column(CodingKeys.isPublic.stringValue, .boolean)
+        table.column(CodingKeys.total.stringValue, .integer).notNull()
+    }
+    
+}
+
+extension SPTPlaylist: Nestable {
+    static var pluralKey: String {
+        return "playlists"
     }
 }

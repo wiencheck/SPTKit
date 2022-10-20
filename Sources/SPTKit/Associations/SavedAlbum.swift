@@ -10,7 +10,7 @@ import GRDB
 
 public struct SavedAlbum: Codable, Hashable {
     
-    public let albumId: SPTSimplifiedAlbum.ID
+    public let albumId: SPTAlbum.ID
     public let addedDate: Date
         
     public init(albumId: String, addedDate: Date) {
@@ -21,7 +21,7 @@ public struct SavedAlbum: Codable, Hashable {
 
 extension SavedAlbum: GRDBRecord {
     
-    static let album = belongsTo(SPTSimplifiedAlbum.self)
+    static let album = belongsTo(SPTAlbum.self)
     
     public static var databaseTableName: String { "savedAlbum" }
     
@@ -31,7 +31,7 @@ extension SavedAlbum: GRDBRecord {
                 table.column("albumId", .text)
                     .primaryKey(onConflict: .replace)
                     .notNull()
-                    .references(SPTSimplifiedAlbum.databaseTableName, onDelete: .cascade)
+                    .references(SPTAlbum.databaseTableName, onDelete: .cascade)
                 table.column("addedDate", .date)
                     .notNull()
             }
@@ -39,7 +39,7 @@ extension SavedAlbum: GRDBRecord {
     }
 }
 
-extension SPTSimplifiedAlbum {
+extension SPTAlbum {
     
     private static let savedAlbum = hasOne(SavedAlbum.self)
     

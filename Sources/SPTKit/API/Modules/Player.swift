@@ -8,13 +8,88 @@
 import Foundation
 
 public extension SPT {
+    
     struct Player {
-        private enum Method: SPTMethod {
-            case transfer, resume, pause, devices, currentTrack, seek
-            
-            var path: String {
-                return "me/player"
+        /**
+         Get information about a user’s available devices.
+         */
+        static func getAvailableDevices(completion: @escaping (Result<[SPTDevice], Error>) -> Void) {
+            SPT.call(method: Method.devices, pathParam: nil, queryParams: nil, body: nil)  { (result: Result<Nested<SPTDevice>, Error>) in
+                switch result {
+                case .success(let root):
+                    completion(.success(root.items))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
+        }
+        
+        static func transferPlayback(deviceId: String, play: Bool = true, completion: ((Error?) -> Void)?) {
+            let body: [String: Any] = [
+                "device_ids": [deviceId],
+                "play": play
+            ]
+            SPT.call(method: Method.transfer, pathParam: nil, queryParams: nil, body: body, completion: completion)
+        }
+        
+        /**
+         Resume current playback on the user’s active device.
+         */
+        static func resumePlayback(deviceId: String? = nil, contextUri: String? = nil, uris: [String]? = nil, offset: Int? = nil, positionMs: Int? = nil, completion: ((Error?) -> Void)?) {
+            var queryParams: [String: String]?
+            if let deviceId = deviceId {
+                queryParams = [
+                    "device_id": deviceId
+                ]
+            }
+            
+            var body: [String: Any] = [:]
+            if let contextUri = contextUri {
+                body["context_uri"] = contextUri
+            }
+            if let uris = uris {
+                body["uris"] = [uris.joined(separator: ",")]
+            }
+            if let offset = offset {
+                body["offset"] = offset
+            }
+            if let positionMs = positionMs {
+                body["position_ms"] = positionMs
+            }
+            SPT.call(method: Method.resume, pathParam: nil, queryParams: queryParams, body: body, completion: completion)
+        }
+        
+        static func getCurrentlyPlayingTrack(completion: @escaping (Result<SPTPlayback, Error>) -> Void) {
+            let queryParams = [
+                "market": SPT.countryCode ?? "en"
+            ]
+            SPT.call(method: Method.currentTrack,
+                     queryParams: queryParams,
+                     completion: completion)
+        }
+        
+        static func seekToPosition(positionMs: Int, deviceId: String? = nil, completion: ((Error?) -> Void)?) {
+            var queryParams = [
+                "position_ms": String(positionMs)
+            ]
+            if let deviceId = deviceId {
+                queryParams["device_id"] = deviceId
+            }
+            SPT.call(method: Method.seek,
+                     queryParams: queryParams,
+                     completion: completion)
+        }
+        
+        @discardableResult
+        static func getUserQueue(completion: @escaping (Result<UserQueueResponse, Error>) -> Void) -> URLSessionDataTask? {
+            return SPT.call(method: Method.getQueue,
+                            completion: completion)
+        }
+        
+        private enum Method: SPTMethod {
+            case transfer, resume, pause, devices, currentTrack, seek, getQueue, getRecentlyPlayed
+            
+            var path: String { "me/player" }
             
             var subpath: String? {
                 switch self {
@@ -30,152 +105,104 @@ public extension SPT {
                     return "currently-playing"
                 case .seek:
                     return "seek"
+                case .getQueue:
+                    return "queue"
+                case .getRecentlyPlayed:
+                    return "recently-played"
                 }
             }
             
             var method: HTTPMethod {
                 switch self {
-                case .devices, .currentTrack:
-                    return .get
                 case .transfer, .resume, .pause, .seek:
                     return .put
+                default:
+                    return .get
                 }
             }
         }
     }
 }
 
-public extension SPT.Player {
-    /**
-     Get information about a user’s available devices.
-     */
-    static func getAvailableDevices(completion: @escaping (Result<[SPTDevice], Error>) -> Void) {
-        
-        SPT.call(method: Method.devices, pathParam: nil, queryParams: nil, body: nil)  { (result: Result<Nested<SPTDevice>, Error>) in
-            switch result {
-            case .success(let root):
-                completion(.success(root.items))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    static func transferPlayback(deviceId: String, play: Bool = true, completion: ((Error?) -> Void)?) {
-        
-        let body: [String: Any] = [
-            "device_ids": [deviceId],
-            "play": play
-        ]
-        SPT.call(method: Method.transfer, pathParam: nil, queryParams: nil, body: body, completion: completion)
-    }
-    
-    /**
-     Resume current playback on the user’s active device.
-     */
-    static func resumePlayback(deviceId: String? = nil, contextUri: String? = nil, uris: [String]? = nil, offset: Int? = nil, positionMs: Int? = nil, completion: ((Error?) -> Void)?) {
-        
-        var queryParams: [String: String]?
-        if let deviceId = deviceId {
-            queryParams = [
-                "device_id": deviceId
-            ]
-        }
-        
-        var body = [String: Any]()
-        if let contextUri = contextUri {
-            body["context_uri"] = contextUri
-        }
-        if let uris = uris {
-            body["uris"] = [uris.joined(separator: ",")]
-        }
-        if let offset = offset {
-            body["offset"] = offset
-        }
-        if let positionMs = positionMs {
-            body["position_ms"] = positionMs
-        }
-        SPT.call(method: Method.resume, pathParam: nil, queryParams: queryParams, body: body, completion: completion)
-    }
-    
-    static func getCurrentlyPlayingTrack(completion: @escaping (Result<SPTPlayback, Error>) -> Void) {
-        SPT.call(method: Method.currentTrack, completion: completion)
-    }
-    
-    static func seekToPosition(positionMs: Int, deviceId: String? = nil, completion: ((Error?) -> Void)?) {
-        
-        var queryParams = [
-            "position_ms": String(positionMs)
-        ]
-        if let deviceId = deviceId {
-            queryParams["device_id"] = deviceId
-        }
-        SPT.call(method: Method.seek, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
-    }
-    
-}
-
-// MARK: Async/Await support.
+// - MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Player {
     /**
      Get information about a user’s available devices.
      */
     static func getAvailableDevices() async throws -> [SPTDevice] {
-        
-        let nested: Nested<SPTDevice> = try await SPT.call(method: Method.devices, pathParam: nil, queryParams: nil, body: nil)
-        return nested.items
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getAvailableDevices { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     static func transferPlayback(deviceId: String, play: Bool = true) async throws {
-        
-        let body: [String: Any] = [
-            "device_ids": [deviceId],
-            "play": play
-        ]
-        try await SPT.call(method: Method.transfer, pathParam: nil, queryParams: nil, body: body)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.transferPlayback(deviceId: deviceId, play: play) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
+            }
+        }
     }
     
     /**
      Resume current playback on the user’s active device.
      */
     static func resumePlayback(deviceId: String? = nil, contextUri: String? = nil, uris: [String]? = nil, offset: Int? = nil, positionMs: Int? = nil) async throws {
-        
-        var queryParams: [String: String]?
-        if let deviceId = deviceId {
-            queryParams = [
-                "device_id": deviceId
-            ]
+        return try await withCheckedThrowingContinuation { continuation in
+            self.resumePlayback(deviceId: deviceId,
+                                contextUri: contextUri,
+                                uris: uris,
+                                offset: offset,
+                                positionMs: positionMs) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
+            }
         }
-        
-        var body = [String: Any]()
-        if let contextUri = contextUri {
-            body["context_uri"] = contextUri
-        }
-        if let uris = uris {
-            body["uris"] = [uris.joined(separator: ",")]
-        }
-        if let offset = offset {
-            body["offset"] = offset
-        }
-        if let positionMs = positionMs {
-            body["position_ms"] = positionMs
-        }
-        try await SPT.call(method: Method.resume, pathParam: nil, queryParams: queryParams, body: body)
     }
     
     static func getCurrentlyPlayingTrack() async throws -> SPTPlayback {
-        return try await SPT.call(method: Method.currentTrack)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getCurrentlyPlayingTrack { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     static func seekToPosition(positionMs: Int, deviceId: String? = nil) async throws {
-        
-        var queryParams = [
-            "position_ms": String(positionMs)
-        ]
-        if let deviceId = deviceId {
-            queryParams["device_id"] = deviceId
+        return try await withCheckedThrowingContinuation { continuation in
+            self.seekToPosition(positionMs: positionMs,
+                                deviceId: deviceId) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
+            }
         }
-        try await SPT.call(method: Method.seek, pathParam: nil, queryParams: queryParams, body: nil)
+    }
+    
+    static func getUserQueue() async throws -> UserQueueResponse {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getUserQueue { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+}
+
+public final class UserQueueResponse: Decodable {
+    let currentlyPlaying: SPTTrack
+    let queue: [SPTTrack]
+    
+    private enum CodingKeys: String, CodingKey {
+        case currentlyPlaying = "currently_playing"
+        case queue
     }
 }

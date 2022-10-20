@@ -13,4 +13,5 @@ public protocol GRDBRecord: FetchableRecord, PersistableRecord {
     
     static var databaseTableName: String { get }
     static var migration: Migration { get }
+    
 }

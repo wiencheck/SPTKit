@@ -10,10 +10,10 @@ import GRDB
 
 public struct SavedTrack: Codable, Hashable {
     
-    public let trackId: SPTSimplifiedTrack.ID
+    public let trackId: SPTTrack.ID
     public let addedDate: Date
         
-    public init(trackId: SPTSimplifiedTrack.ID, addedDate: Date) {
+    public init(trackId: SPTTrack.ID, addedDate: Date) {
         self.trackId = trackId
         self.addedDate = addedDate
     }
@@ -21,7 +21,7 @@ public struct SavedTrack: Codable, Hashable {
 
 extension SavedTrack: GRDBRecord {
     
-    static let track = belongsTo(SPTSimplifiedTrack.self)
+    static let track = belongsTo(SPTTrack.self)
     
     public static var databaseTableName: String { "savedTrack" }
     
@@ -31,7 +31,7 @@ extension SavedTrack: GRDBRecord {
                 table.column("trackId", .text)
                     .primaryKey(onConflict: .replace)
                     .notNull()
-                    .references(SPTSimplifiedTrack.databaseTableName, onDelete: .cascade)
+                    .references(SPTTrack.databaseTableName, onDelete: .cascade)
                 table.column("addedDate", .date)
                     .notNull()
             }
@@ -39,7 +39,7 @@ extension SavedTrack: GRDBRecord {
     }
 }
 
-extension SPTSimplifiedTrack {
+extension SPTTrack {
     
     private static let savedTrack = hasOne(SavedTrack.self)
     

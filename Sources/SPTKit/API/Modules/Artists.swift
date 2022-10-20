@@ -75,7 +75,7 @@ public extension SPT.Artists {
      - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
      - completion: Handler called on success or failure.
      */
-    static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTAlbum>, Error>) -> Void) {
+    static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTAlbum>, Error>) -> Void) {
         
         if id.isEmpty {
             completion(.failure(SPTError.emptyParameter))
@@ -85,13 +85,15 @@ public extension SPT.Artists {
             completion(.failure(SPTError.albumGroupsEmpty))
             return
         }
-        let queryParams = [
+        var queryParams = [
             "limit": String(limit),
             "offset": String(offset),
             "include_groups": groups.map {
                 $0.rawValue
             }.joined(separator: ",")
         ]
+        queryParams.updateValueIfExists(market, forKey: "country")
+        
         SPT.call(method: Method.artistAlbums, pathParam: id, queryParams: queryParams, body: nil, completion: completion)
     }
     
@@ -106,8 +108,12 @@ public extension SPT.Artists {
      - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
      - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getArtistTopTracks(id: String, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
-        SPT.call(method: Method.topTracks, pathParam: id) { (result: Result<Nested<SPTTrack>, Error>) in
+    static func getArtistTopTracks(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<[SPTTrack], Error>) -> Void) {
+        
+        var queryParams: [String: String] = [:]
+        queryParams.updateValueIfExists(market, forKey: "country")
+        
+        SPT.call(method: Method.topTracks, pathParam: id, queryParams: queryParams, body: nil) { (result: Result<Nested<SPTTrack>, Error>) in
             switch result {
             case .success(let root):
                 completion(.success(root.items))
@@ -159,7 +165,7 @@ public extension SPT.Artists {
     }
 }
 
-// MARK: Async/Await support.
+// - MARK: Async/Await support.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Artists {
     /**
@@ -167,7 +173,11 @@ public extension SPT.Artists {
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/)
      
      - Parameters:
-        - id: Spotify IDs for the artist.
+     - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
+     - limit: The maximum number of tracks to return.
+     - offset: The index of the first track to return. Default: 0 (the first object). Use with limit to get the next set of tracks.
+     - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+     - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getArtist(id: String) async throws -> SPTArtist {
         try await SPT.call(method: Method.artist, pathParam: id, queryParams: nil, body: nil)
@@ -178,12 +188,13 @@ public extension SPT.Artists {
      [Read more]( https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-albums/)
      
      - Parameters:
-        - id: The Spotify ID for the artist.
-        - groups:
-        - limit: The number of album objects to return. Default: 20. Minimum: 1. Maximum: 50.
-        - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
+     - id: The Spotify ID for the artist.
+     - groups:
+     - limit: The number of album objects to return. Default: 20. Minimum: 1. Maximum: 50.
+     - offset: The index of the first album to return. Default: 0 (i.e., the first album). Use with limit to get the next set of albums.
+     - completion: Handler called on success or failure.
      */
-    static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTAlbum> {
+    static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTAlbum> {
         
         if id.isEmpty {
             throw SPTError.emptyParameter
@@ -191,13 +202,15 @@ public extension SPT.Artists {
         if groups.isEmpty {
             throw SPTError.albumGroupsEmpty
         }
-        let queryParams = [
+        var queryParams = [
             "limit": String(limit),
             "offset": String(offset),
             "include_groups": groups.map {
                 $0.rawValue
             }.joined(separator: ",")
         ]
+        queryParams.updateValueIfExists(market, forKey: "country")
+        
         return try await SPT.call(method: Method.artistAlbums, pathParam: id, queryParams: queryParams, body: nil)
     }
     
@@ -206,23 +219,27 @@ public extension SPT.Artists {
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-top-tracks/)
      
      - Parameters:
-        - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
-        - limit: The maximum number of tracks to return.
-        - offset: The index of the first track to return. Default: 0 (the first object). Use with limit to get the next set of tracks.
-        - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+     - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
+     - limit: The maximum number of tracks to return.
+     - offset: The index of the first track to return. Default: 0 (the first object). Use with limit to get the next set of tracks.
+     - market: An ISO 3166-1 alpha-2 country code. Default value is read from `SPT.countryCode`.
+     - completion: Handler containing decoded objects, called after completing the request.
      */
-    static func getArtistTopTracks(id: String) async throws -> [SPTTrack] {
-        let nested: Nested<SPTTrack> = try await SPT.call(method: Method.topTracks, pathParam: id)
+    static func getArtistTopTracks(id: String, market: String? = SPT.countryCode) async throws -> [SPTTrack] {
+        
+        var queryParams: [String: String] = [:]
+        queryParams.updateValueIfExists(market, forKey: "country")
+        
+        let nested: Nested<SPTTrack> = try await SPT.call(method: Method.topTracks, pathParam: id, queryParams: queryParams, body: nil)
         return nested.items
     }
     
     /**
      Get Spotify catalog information for several artists based on their Spotify IDs.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-several-artists/)
-     
      - Parameters:
-        - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
-        - completion: Handler containing decoded objects, called after completing the request.
+     - ids: Array of Spotify IDs for the artists. Maximum: 50 IDs.
+     - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getSeveralArtists(ids: [String]) async throws -> [SPTArtist] {
         
@@ -239,9 +256,6 @@ public extension SPT.Artists {
     /**
      Get Spotify catalog information about artists similar to a given artist. Similarity is based on analysis of the Spotify community’s listening history.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-related-artists/)
-     
-     - Parameters:
-        - id: Spotify IDs for the artist.
      */
     static func getArtistRelatedArtists(id: String) async throws -> [SPTArtist] {
         

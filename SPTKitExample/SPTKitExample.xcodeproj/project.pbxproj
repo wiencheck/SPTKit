@@ -18,7 +18,6 @@
 		2B607D062517351B0056F917 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B607D052517351B0056F917 /* Notifications.swift */; };
 		3004C2F526F4910C00154BE3 /* SPTKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3004C2F426F4910C00154BE3 /* SPTKit */; };
 		302069B126FF289000C142FC /* PlaylistsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302069B026FF288F00C142FC /* PlaylistsViewController.swift */; };
-		306E74AD2710801500D2234E /* GlobalFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306E74AC2710801500D2234E /* GlobalFunctions.swift */; };
 		30EFA38B26F35C4200545BA1 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30EFA38A26F35C4200545BA1 /* LoginViewController.swift */; };
 		30EFA38D26F35EF500545BA1 /* AlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30EFA38C26F35EF500545BA1 /* AlbumsViewController.swift */; };
 		30F1AF37270467E000D9F7E5 /* PlaylistTracksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F1AF36270467E000D9F7E5 /* PlaylistTracksViewController.swift */; };
@@ -38,7 +37,6 @@
 		2B607D052517351B0056F917 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		2B607D07251735AA0056F917 /* SPTKitExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SPTKitExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		302069B026FF288F00C142FC /* PlaylistsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsViewController.swift; sourceTree = "<group>"; };
-		306E74AC2710801500D2234E /* GlobalFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFunctions.swift; sourceTree = "<group>"; };
 		306E74AE271083D600D2234E /* SPTKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SPTKit; path = ..; sourceTree = "<group>"; };
 		30EFA38A26F35C4200545BA1 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		30EFA38C26F35EF500545BA1 /* AlbumsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsViewController.swift; sourceTree = "<group>"; };
@@ -89,7 +87,6 @@
 				2B607CFC251733D90056F917 /* SpotifyManager.swift */,
 				2B607D052517351B0056F917 /* Notifications.swift */,
 				2B607D07251735AA0056F917 /* SPTKitExample-Bridging-Header.h */,
-				306E74AC2710801500D2234E /* GlobalFunctions.swift */,
 			);
 			path = SPTKitExample;
 			sourceTree = "<group>";
@@ -193,7 +190,6 @@
 			files = (
 				30F1AF37270467E000D9F7E5 /* PlaylistTracksViewController.swift in Sources */,
 				30EFA38D26F35EF500545BA1 /* AlbumsViewController.swift in Sources */,
-				306E74AD2710801500D2234E /* GlobalFunctions.swift in Sources */,
 				302069B126FF289000C142FC /* PlaylistsViewController.swift in Sources */,
 				30EFA38B26F35C4200545BA1 /* LoginViewController.swift in Sources */,
 				2B607D062517351B0056F917 /* Notifications.swift in Sources */,
