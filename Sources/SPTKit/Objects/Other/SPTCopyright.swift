@@ -18,7 +18,8 @@
 
 import Foundation
 
-public struct SPTCopyright: Codable {
+public struct SPTCopyright: Codable, Hashable {
+    
     /**
      The copyright text for this object.
      */
@@ -28,4 +29,5 @@ public struct SPTCopyright: Codable {
      The type of copyright: C = the copyright, P = the sound recording (performance) copyright.
      */
     public let type: String
+    
 }

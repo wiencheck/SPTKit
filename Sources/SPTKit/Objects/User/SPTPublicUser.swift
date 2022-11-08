@@ -50,6 +50,7 @@ public class SPTPublicUser: SPTBaseObject {
         displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
         followers = try container.decodeIfPresent(SPTFollowers.self, forKey: .followers)
         images = try container.decodeIfPresent([SPTImage].self, forKey: .images)
+        
         try super.init(from: decoder)
     }
 
@@ -58,6 +59,8 @@ public class SPTPublicUser: SPTBaseObject {
         try container.encodeIfPresent(displayName, forKey: .displayName)
         try container.encodeIfPresent(followers, forKey: .followers)
         try container.encodeIfPresent(images, forKey: .images)
+        
         try super.encode(to: encoder)
     }
+    
 }

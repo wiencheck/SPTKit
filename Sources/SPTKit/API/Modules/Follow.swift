@@ -62,7 +62,6 @@ public extension SPT.Follow {
      - completion: Handler called after completing the request.
      */
     static func followArtists(ids: [String], completion: ((Error?) -> Void)?) {
-        
         let queryParams = [
             "type": "artist",
             "ids": ids.joined(separator: ",")
@@ -78,12 +77,11 @@ public extension SPT.Follow {
      - completion: Handler called after completing the request.
      */
     static func followUsers(ids: [String], completion: ((Error?) -> Void)?) {
-        
         let queryParams = [
             "type": "user",
             "ids": ids.joined(separator: ",")
         ]
-        SPT.call(method: Method.followArtists, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
+        SPT.call(method: Method.followArtists, queryParams: queryParams, completion: completion)
     }
     
     /**
@@ -93,13 +91,12 @@ public extension SPT.Follow {
      - completion: Handler called after completing the request.
      */
     static func followPlaylist(id: String, completion: ((Error?) -> Void)?) {
-        
-        SPT.call(method: Method.followPlaylist, pathParam: id, queryParams: nil, body: nil, completion: completion)
+        SPT.call(method: Method.followPlaylist, pathParam: id, completion: completion)
     }
+    
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Follow {
     
     /**
@@ -110,7 +107,6 @@ public extension SPT.Follow {
      - completion: Handler called after completing the request.
      */
     static func followArtists(ids: [String]) async throws {
-        
         let queryParams = [
             "type": "artist",
             "ids": ids.joined(separator: ",")

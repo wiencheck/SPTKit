@@ -18,14 +18,14 @@
 
 import Foundation
 
-final class SPTJSONDecoder: JSONDecoder {
+public final class SPTJSONDecoder: JSONDecoder {
     
-    override init() {
+    public override init() {
         super.init()
         dateDecodingStrategy = .iso8601
     }
     
-    override func decode<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
+    public override func decode<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
         do {
             return try super.decode(type.self, from: data)
         } catch let DecodingError.dataCorrupted(context) {
@@ -48,4 +48,5 @@ final class SPTJSONDecoder: JSONDecoder {
             throw error
         }
     }
+    
 }

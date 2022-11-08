@@ -17,7 +17,8 @@
 // THE SOFTWARE.
 
 import Foundation
-public enum SPTObjectType: String, Codable, CaseIterable {
+
+public enum SPTObjectType: String, Codable, Hashable, CaseIterable {
     /**
      Type associated with album objects.
      

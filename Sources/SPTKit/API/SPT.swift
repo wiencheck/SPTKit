@@ -19,6 +19,15 @@
 
 import Foundation
 
+public func printJSON(data: Data) {
+    if let json = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers),
+       let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
+        print(String(decoding: jsonData, as: UTF8.self))
+    } else {
+        print("json data malformed")
+    }
+}
+
 public struct SPT {
     
     /**
@@ -114,7 +123,7 @@ extension SPT {
                 completion(.failure(error))
                 return
             }
-            guard httpResponse.statusCode == 200 else {
+            guard (200...300).contains(httpResponse.statusCode) else {
                 var sptError = (try? JSONDecoder().decode(SPTError.self, from: data)) ?? SPTError.badResponse
                 sptError.additionalHeaders = httpResponse.allHeaderFields as? [String: Any]
                 completion(.failure(sptError))
@@ -144,8 +153,7 @@ extension SPT {
             // If status code is 200 (OK), return successfully
             // If 201, "snapshot_id" was returned
             if let httpResponse = response as? HTTPURLResponse,
-               httpResponse.statusCode == 200 ||
-                httpResponse.statusCode == 201 {
+               (200...300).contains(httpResponse.statusCode) {
                 completion?(nil)
                 return
             }
@@ -169,7 +177,6 @@ extension SPT {
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 13.0, watchOS 8.0, tvOS 13.0, *)
 extension SPT {
     static func perform<T>(request: URLRequest) async throws -> T where T: Decodable {
         return try await withCheckedThrowingContinuation { continuation in
@@ -190,11 +197,6 @@ extension SPT {
             }
         }
     }
-}
-
-// - MARK: Async/Await support.
-@available(macOS 12.0, iOS 13.0, watchOS 8.0, tvOS 13.0, *)
-extension SPT {
     
     static func call<T>(method: SPTMethod,
                         pathParam: String? = nil,

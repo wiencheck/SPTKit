@@ -19,7 +19,7 @@
 import Foundation
 
 /// Full Track object.
-public class SPTTrack: SPTBaseObject {
+public final class SPTTrack: SPTBaseObject {
     
     /**
      The name of this track.
@@ -88,13 +88,7 @@ public class SPTTrack: SPTBaseObject {
      */
     public let popularity: Int?
     
-    public override var description: String {
-        return """
-           Track: \"\(name)\", artists: \(artists), uri: \(uri)
-        """
-    }
-    
-    // MARK: Codable stuff
+    // MARK: Codable
     public enum CodingKeys: String, CodingKey {
         case name, artists, album, popularity
         case availableMarkets = "available_markets"
@@ -150,7 +144,7 @@ public class SPTTrack: SPTBaseObject {
 }
 
 extension SPTTrack: Nestable {
-    static var pluralKey: String {
-        return "tracks"
-    }
+    
+    static var pluralKey: String { "tracks" }
+    
 }

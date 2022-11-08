@@ -20,6 +20,7 @@ import Foundation
 
 /// Private User object.
 public class SPTPrivateUser: SPTPublicUser {
+    
     /**
      The country of the user, as set in the user’s account profile. An ISO 3166-1 alpha-2 country code. This field is only available when the current user has granted access to the user-read-private scope.
      */
@@ -45,6 +46,7 @@ public class SPTPrivateUser: SPTPublicUser {
         country = try container.decodeIfPresent(String.self, forKey: .country)
         email = try container.decodeIfPresent(String.self, forKey: .email)
         product = try container.decodeIfPresent(String.self, forKey: .product)
+        
         try super.init(from: decoder)
     }
 
@@ -53,6 +55,8 @@ public class SPTPrivateUser: SPTPublicUser {
         try container.encode(country, forKey: .country)
         try container.encode(email, forKey: .email)
         try container.encode(product, forKey: .product)
+        
         try super.encode(to: encoder)
     }
+    
 }

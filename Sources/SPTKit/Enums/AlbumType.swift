@@ -7,6 +7,6 @@
 
 import Foundation
 
-public enum AlbumType: String, Codable {
+public enum AlbumType: String, Codable, Hashable {
     case album, single, compilation
 }

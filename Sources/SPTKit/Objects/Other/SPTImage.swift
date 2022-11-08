@@ -18,7 +18,8 @@
 
 import Foundation
 
-public struct SPTImage: Codable {
+public struct SPTImage: Codable, Hashable {
+    
     /**
      The image height in pixels. If unknown: 0 or not returned.
      */

@@ -20,6 +20,7 @@
 import Foundation
 
 public extension SPT {
+    
     struct Search {
         private enum Method: SPTMethod {
             case search
@@ -29,9 +30,11 @@ public extension SPT {
             }
         }
     }
+    
 }
 
 public extension SPT.Search {
+    
     /**
      Get Spotify Catalog information about albums, artists, playlists, tracks, shows or episodes that match a keyword string.
      Query must not be empty.
@@ -74,47 +77,30 @@ public extension SPT.Search {
                       offset: offset,
                       completion: completion)
     }
+    
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Search {
+    
     /**
      Get Spotify Catalog information about albums, artists, playlists, tracks, shows or episodes that match a keyword string.
      Query must not be empty.
      */
     static func search(query: String, types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTSearchResponse {
-        if query.isEmpty {
-            throw SPTError.emptyParameter
+        return try await withCheckedThrowingContinuation { continuation in
+            self.search(query: query, types: types, limit: limit, offset: offset, market: market) { result in
+                continuation.resume(with: result)
+            }
         }
-        
-        var queryParams = [
-            "q": query,
-            "limit": String(limit),
-            "offset": String(offset),
-            "type": types.map {
-                $0.rawValue
-            }.joined(separator: ",")
-        ]
-        queryParams.updateValueIfExists(market, forKey: "market")
-        
-        return try await SPT.call(method: Method.search,
-                                  pathParam: nil,
-                                  queryParams: queryParams,
-                                  body: nil)
     }
     
     static func search(specifiedQuery: [SPTObjectType: String], types: [SPTObjectType] = SPTObjectType.searchTypes, limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTSearchResponse {
-        /*
-         Field filters: By default, results are returned when a match is found in any field of the target object type. Searches can be made more specific by specifying an album, artist or track field filter. For example: The query q=album:gold%20artist:abba&type=album returns only albums with the text “gold” in the album name and the text “abba” in the artist name.
-         */
-        let query = specifiedQuery.map {
-            $0.key.rawValue + ":" + $0.value
-        }.joined(separator: " ")
-        
-        return try await search(query: query,
-                                types: types,
-                                limit: limit,
-                                offset: offset)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.search(specifiedQuery: specifiedQuery, types: types, limit: limit, offset: offset) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
+    
 }

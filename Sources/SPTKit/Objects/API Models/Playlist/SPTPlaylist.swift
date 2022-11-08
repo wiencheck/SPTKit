@@ -19,7 +19,7 @@
 import Foundation
 
 /// Full Playlist object.
-public class SPTPlaylist: SPTBaseObject {
+public final class SPTPlaylist: SPTBaseObject {
     
     /**
      true if the owner allows other users to modify the playlist.
@@ -63,16 +63,11 @@ public class SPTPlaylist: SPTBaseObject {
     public let total: Int
     
     /**
-     The tracks of the playlist.
-     */
-    public let tracks: SPTPagingObject<SPTPlaylistTrack>?
-    
-    /**
      Information about the followers of the playlist.
      */
     public let followers: SPTFollowers?
     
-    // MARK: Codable stuff
+    // MARK: Codable
     public enum CodingKeys: String, CodingKey {
         case images, name, owner, tracks, followers, total
         case isCollaborative = "collaborative"
@@ -87,7 +82,7 @@ public class SPTPlaylist: SPTBaseObject {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+    
         images = try container.decode([SPTImage].self, forKey: .images)
         name = try container.decode(String.self, forKey: .name)
         owner = try container.decode(SPTPublicUser.self, forKey: .owner)
@@ -103,7 +98,6 @@ public class SPTPlaylist: SPTBaseObject {
             let subcontainer = try container.nestedContainer(keyedBy: TracksCodingKeys.self, forKey: .tracks)
             total = try subcontainer.decode(Int.self, forKey: .total)
         }
-        tracks = try container.decodeIfPresent(SPTPagingObject<SPTPlaylistTrack>.self, forKey: .tracks)
         followers = try container.decodeIfPresent(SPTFollowers.self, forKey: .followers)
         
         try super.init(from: decoder)
@@ -120,7 +114,6 @@ public class SPTPlaylist: SPTBaseObject {
         try container.encode(snapshotId, forKey: .snapshotId)
         try container.encode(isPublic, forKey: .isPublic)
         try container.encode(total, forKey: .total)
-        try container.encodeIfPresent(tracks, forKey: .tracks)
         try container.encodeIfPresent(followers, forKey: .followers)
         
         try super.encode(to: encoder)
@@ -129,7 +122,7 @@ public class SPTPlaylist: SPTBaseObject {
 }
 
 extension SPTPlaylist: Nestable {
-    static var pluralKey: String {
-        return "playlists"
-    }
+    
+    static var pluralKey: String { "playlists" }
+    
 }

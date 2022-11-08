@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum AlbumGroup: String, CaseIterable, Codable {
+public enum AlbumGroup: String, CaseIterable, Codable, Hashable {
     case album, single, compilation
     case appearsOn = "appears_on"
 }

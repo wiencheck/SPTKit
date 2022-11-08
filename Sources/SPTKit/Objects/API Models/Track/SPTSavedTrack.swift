@@ -20,6 +20,7 @@ import Foundation
 
 /// Saved Track object containing reference to the full Track object.
 public class SPTSavedTrack: Codable {
+    
     /**
      The date and time the track was saved.
      */
@@ -30,7 +31,7 @@ public class SPTSavedTrack: Codable {
      */
     public let track: SPTTrack
     
-    // MARK: Codable stuff
+    // MARK: Codable
     private enum CodingKeys: String, CodingKey {
         case track
         case addedDate = "added_at"
@@ -38,10 +39,12 @@ public class SPTSavedTrack: Codable {
 }
 
 extension SPTSavedTrack: CustomStringConvertible {
+    
     public var description: String {
         return """
             Added at: \(addedDate)
             \(track)
         """
     }
+    
 }

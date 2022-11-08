@@ -19,7 +19,8 @@
 /**
  Container class for encapsuling objects included in search response from Spotify service.
  */
-public class SPTSearchResponse: Codable {
+public struct SPTSearchResponse: Codable {
+    
     /**
      Simplified track objects included in the response, wrapped in paging object.
      */
@@ -39,4 +40,5 @@ public class SPTSearchResponse: Codable {
      Simplified playlist objects included in the response, wrapped in paging object.
      */
     public let playlists: SPTPagingObject<SPTPlaylist>?
+    
 }

@@ -20,6 +20,7 @@ import Foundation
 
 /// Playlist track object
 public class SPTPlaylistTrack: Codable {
+    
     /**
      The date and time the track was added. Note that some very old playlists may return null in this field.
      */
@@ -40,19 +41,22 @@ public class SPTPlaylistTrack: Codable {
      */
     public let track: SPTTrack
     
-    // MARK: Codable stuff
+    // MARK: Codable
     private enum CodingKeys: String, CodingKey {
         case track
         case addedDate = "added_at"
         case addedBy = "added_by"
         case isLocal = "is_local"
     }
+    
 }
 
 extension SPTPlaylistTrack: CustomStringConvertible {
+    
     public var description: String {
         return """
         PlaylistTrack: \(track.name)
         """
     }
+    
 }

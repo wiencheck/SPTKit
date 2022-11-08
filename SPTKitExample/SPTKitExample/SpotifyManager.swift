@@ -32,16 +32,20 @@ final class SpotifyManager: NSObject {
     private func observeSessionURL() {
         guard sessionURLObserver == nil else { return }
         sessionURLObserver = NotificationCenter.default.addObserver(forName: Notifications.applicationReceivedURL, object: nil, queue: nil, using: { sender in
-            guard let userInfo = sender.userInfo, let application = userInfo["app"] as? UIApplication, let url = userInfo["url"] as? URL, let options = userInfo["options"] as? [UIApplication.OpenURLOptionsKey: Any] else {
+            guard let userInfo = sender.userInfo,
+                    let url = userInfo["url"] as? URL,
+            let options = userInfo["options"] as? [UIApplication.OpenURLOptionsKey: Any] else {
+                assertionFailure("Did not find proper Spotify URL")
                 return
             }
-            self.sessionManager.application(application, open: url, options: options)
+            self.sessionManager.application(.shared, open: url, options: options)
         })
     }
     
 }
 
 extension SpotifyManager: SPTSessionManagerDelegate {
+    
     func sessionManager(manager: SPTSessionManager, didInitiate session: SPTSession) {
         loginHandler?(.success(session.accessToken))
     }
@@ -53,19 +57,19 @@ extension SpotifyManager: SPTSessionManagerDelegate {
     private var scopes: SPTScope {
         return [
             .userLibraryRead,
-            .userLibraryModify,
-            .playlistReadCollaborative,
-            .playlistReadPrivate,
-            .userReadCurrentlyPlaying,
-            .userReadPlaybackState,
-            .userReadPrivate,
-            .userReadRecentlyPlayed,
-            .userModifyPlaybackState,
-            .userReadCurrentlyPlaying,
-            .userReadRecentlyPlayed,
-            .userTopRead,
-            .playlistModifyPrivate,
-            .playlistModifyPublic
+//            .userLibraryModify,
+//            .playlistReadCollaborative,
+//            .playlistReadPrivate,
+//            .userReadCurrentlyPlaying,
+//            .userReadPlaybackState,
+//            .userReadPrivate,
+//            .userReadRecentlyPlayed,
+//            .userModifyPlaybackState,
+//            .userReadCurrentlyPlaying,
+//            .userReadRecentlyPlayed,
+//            .userTopRead,
+//            .playlistModifyPrivate,
+//            .playlistModifyPublic
         ]
     }
 }

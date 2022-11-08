@@ -19,7 +19,7 @@
 import Foundation
 
 /// Full Album object.
-public class SPTAlbum: SPTBaseObject {
+public final class SPTAlbum: SPTBaseObject {
     
     /**
      The name of this album.
@@ -52,11 +52,6 @@ public class SPTAlbum: SPTBaseObject {
     public let images: [SPTImage]
     
     /**
-     The precision with which release_date value is known: "year" , "month" , or "day".
-     */
-    public let releaseDatePrecision: SPTDatePrecision
-    
-    /**
      The date the album was first released.
      */
     public let releaseDate: Date?
@@ -64,7 +59,7 @@ public class SPTAlbum: SPTBaseObject {
     /**
      The copyright statements of the album.
      */
-    public let copyrights: [SPTCopyright]
+    public let copyrights: [SPTCopyright]?
     
     /**
      A list of the genres used to classify the album. For example: "Prog Rock" , "Post-Grunge". (If not yet classified, the array is empty.)
@@ -86,13 +81,7 @@ public class SPTAlbum: SPTBaseObject {
      */
     public let tracks: SPTPagingObject<SPTTrack>?
     
-    public override var description: String {
-        return """
-           Album: \"\(name)\", artists: \(artists), uri: \(uri)
-        """
-    }
-    
-    // MARK: Codable stuff
+    // MARK: Codable
     public enum CodingKeys: String, CodingKey {
         case artists, images, name, copyrights, genres, label, popularity, tracks
         case albumGroup = "album_group"
@@ -106,23 +95,23 @@ public class SPTAlbum: SPTBaseObject {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         albumGroup = try container.decodeIfPresent(AlbumGroup.self, forKey: .albumGroup)
-        albumType = try container.decodeIfPresent(AlbumType.self, forKey: .albumType) ?? .album
+        albumType = try container.decode(AlbumType.self, forKey: .albumType)
         artists = try container.decode([SPTArtist].self, forKey: .artists)
         availableMarkets = try container.decodeIfPresent([String].self, forKey: .availableMarkets) ?? []
         images = try container.decode([SPTImage].self, forKey: .images)
         name = try container.decode(String.self, forKey: .name)
-        releaseDatePrecision = try container.decode(SPTDatePrecision.self, forKey: .releaseDatePrecision)
         
-        if let date = try container.decodeIfPresent(Date.self, forKey: .releaseDate) {
+        if let date = try? container.decode(Date.self, forKey: .releaseDate) {
             releaseDate = date
         }
-        else if let dateString = try container.decodeIfPresent(String.self, forKey: .releaseDate) {
-            releaseDate = SPTDateFormatter.shared.date(from: dateString, precision: releaseDatePrecision)
+        else if let datePrecision = try container.decodeIfPresent(SPTDatePrecision.self, forKey: .releaseDatePrecision),
+                let dateString = try container.decodeIfPresent(String.self, forKey: .releaseDate) {
+            releaseDate = try SPTDateFormatter.shared.date(from: dateString, precision: datePrecision)
         }
         else {
             releaseDate = nil
         }
-        copyrights = try container.decodeIfPresent([SPTCopyright].self, forKey: .copyrights) ?? []
+        copyrights = try container.decodeIfPresent([SPTCopyright].self, forKey: .copyrights)
         genres = try container.decodeIfPresent([String].self, forKey: .genres) ?? []
         label = try container.decodeIfPresent(String.self, forKey: .label)
         popularity = try container.decodeIfPresent(Int.self, forKey: .popularity)
@@ -140,20 +129,20 @@ public class SPTAlbum: SPTBaseObject {
         try container.encode(availableMarkets, forKey: .availableMarkets)
         try container.encode(images, forKey: .images)
         try container.encode(name, forKey: .name)
-        try container.encode(releaseDatePrecision, forKey: .releaseDatePrecision)
         try container.encodeIfPresent(releaseDate, forKey: .releaseDate)
         try container.encodeIfPresent(copyrights, forKey: .copyrights)
-        try container.encodeIfPresent(genres, forKey: .genres)
+        try container.encode(genres, forKey: .genres)
         try container.encodeIfPresent(label, forKey: .label)
         try container.encodeIfPresent(popularity, forKey: .popularity)
         try container.encodeIfPresent(tracks, forKey: .tracks)
         
         try super.encode(to: encoder)
     }
+    
 }
 
 extension SPTAlbum: Nestable {
-    static var pluralKey: String {
-        return "albums"
-    }
+    
+    static var pluralKey: String { "albums" }
+    
 }

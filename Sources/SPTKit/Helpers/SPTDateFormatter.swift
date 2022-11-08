@@ -19,12 +19,32 @@
 import Foundation
 
 final class SPTDateFormatter {
+    
     static let shared = SPTDateFormatter()
     
     private let formatter = DateFormatter()
     
-    func date(from dateString: String, precision: SPTDatePrecision) -> Date? {
+    func date(from dateString: String, precision: SPTDatePrecision) throws -> Date {
         formatter.dateFormat = precision.dateFormat
-        return formatter.date(from: dateString)
+        guard let result = formatter.date(from: dateString) else {
+            throw Errors.invalidString(dateString)
+        }
+        return result
     }
+    
+}
+
+private extension SPTDateFormatter {
+    
+    enum Errors: LocalizedError {
+        case invalidString(String)
+        
+        var errorDescription: String? {
+            switch self {
+            case .invalidString(let value):
+                return "Failed to parse date from string: \"\(value)\""
+            }
+        }
+    }
+    
 }

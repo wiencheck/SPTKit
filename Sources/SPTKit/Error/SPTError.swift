@@ -33,7 +33,7 @@ public struct SPTError: Codable {
      */
     public var additionalHeaders: [String: Any]?
     
-    // MARK: Codable stuff
+    // MARK: Codable
     private enum CodingKeys: String, CodingKey {
         case error
     }

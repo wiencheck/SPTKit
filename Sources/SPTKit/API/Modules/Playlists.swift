@@ -20,12 +20,12 @@
 import Foundation
 
 public extension SPT {
+    
     /**
      Endpoints for retrieving information about a user’s playlists and for managing a user’s playlists.
      */
     struct Playlists {
         private enum Method: SPTMethod {
-            // Get
             case getPlaylist, getPlaylistTracks, getUserPlaylists, getPlaylistImage
             case changeDetails, replaceItems, reorderItems, replacePlaylistImage
             case addItems, createPlaylist
@@ -70,12 +70,12 @@ public extension SPT {
 }
 
 public extension SPT.Playlists {
+    
     /**
      Get a playlist owned by a Spotify user.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
      */
     static func getPlaylist(id: String, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
-        
         var queryParams: [String: String] = [:]
         queryParams.updateValueIfExists(market, forKey: "market")
         
@@ -97,13 +97,43 @@ public extension SPT.Playlists {
     }
     
     /**
+     Create a playlist for a Spotify user. (The playlist will be empty until you add tracks.)
+     
+     - Parameters:
+        - named: The name for the new playlist, for example "Your Coolest Playlist". This name does not need to be unique; a user may have several playlists with the same name.
+        - isPublic: Defaults to true. If true the playlist will be public, if false it will be private. To be able to create private playlists, the user must have granted the playlist-modify-private scope
+        - isCollaborative: Defaults to false. If true the playlist will be collaborative. Note: to create a collaborative playlist you must also set public to false. To create collaborative playlists you must have granted playlist-modify-private and playlist-modify-public scopes.
+        - description: value for playlist description as displayed in Spotify Clients and in the Web API.
+     */
+    static func createPlaylist(named name: String,
+                               username: String,
+                               isPublic: Bool = true,
+                               isCollaborative: Bool = false,
+                               description: String? = nil,
+                               completion: @escaping (Result<SPTPlaylist, Error>) -> Void) {
+        var body: [String: Any] = [
+            "name": name,
+            "public": isPublic,
+            "collaborative": isCollaborative
+        ]
+        if let description {
+            body["description"] = description
+        }
+        
+        SPT.call(method: Method.createPlaylist,
+                 pathParam: username,
+                 body: body,
+                 completion: completion)
+    }
+    
+    /**
      Add one or more items to a user’s playlist.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/add-tracks-to-playlist/)
      - Parameters:
-     - id: The Spotify ID for the playlist.
-     - uris: Array of `Spotify URIs` to add, can be track or episode URL. Example URI: `spotify:track:0Zn0jtLj2ehkIPxlCoO65O`
-     - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
-     - completion: Handler called after completing the request.
+        - id: The Spotify ID for the playlist.
+        - uris: Array of `Spotify URIs` to add, can be track or episode URL. Example URI: `spotify:track:0Zn0jtLj2ehkIPxlCoO65O`
+        - position: Optional. The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2 . If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
+        - completion: Handler called after completing the request.
      */
     static func addTracksToPlaylist(id: String, uris: [String], position: Int?, completion: ((Error?) -> Void)?) {
         var queryParams = [
@@ -144,11 +174,12 @@ public extension SPT.Playlists {
         
         SPT.call(method: Method.removeItems, pathParam: id, queryParams: queryParams, body: dict, completion: completion)
     }
+    
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Playlists {
+    
     /**
      Get a playlist owned by a Spotify user.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/)
@@ -217,6 +248,31 @@ public extension SPT.Playlists {
                     return continuation.resume(throwing: error)
                 }
                 continuation.resume()
+            }
+        }
+    }
+    
+    /**
+     Create a playlist for a Spotify user. (The playlist will be empty until you add tracks.)
+     
+     - Parameters:
+        - named: The name for the new playlist, for example "Your Coolest Playlist". This name does not need to be unique; a user may have several playlists with the same name.
+        - isPublic: Defaults to true. If true the playlist will be public, if false it will be private. To be able to create private playlists, the user must have granted the playlist-modify-private scope
+        - isCollaborative: Defaults to false. If true the playlist will be collaborative. Note: to create a collaborative playlist you must also set public to false. To create collaborative playlists you must have granted playlist-modify-private and playlist-modify-public scopes.
+        - description: value for playlist description as displayed in Spotify Clients and in the Web API.
+     */
+    static func createPlaylist(named name: String,
+                               username: String,
+                               isPublic: Bool = true,
+                               isCollaborative: Bool = false,
+                               description: String? = nil) async throws -> SPTPlaylist {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.createPlaylist(named: name,
+                                username: username,
+                                isPublic: isPublic,
+                                isCollaborative: isCollaborative,
+                                description: description) { result in
+                continuation.resume(with: result)
             }
         }
     }

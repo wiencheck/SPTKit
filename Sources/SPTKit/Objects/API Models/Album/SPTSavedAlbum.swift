@@ -19,7 +19,8 @@
 import Foundation
 
 /// Saved Album object containing reference to the full Album object.
-public class SPTSavedAlbum: Codable {
+public struct SPTSavedAlbum: Codable {
+    
     /**
      The date and time the album was saved.
      */
@@ -30,18 +31,21 @@ public class SPTSavedAlbum: Codable {
      */
     public let album: SPTAlbum
     
-    // MARK: Codable stuff
+    // MARK: Codable
     private enum CodingKeys: String, CodingKey {
         case addedDate = "added_at"
         case album
     }
+    
 }
 
 extension SPTSavedAlbum: CustomStringConvertible {
+    
     public var description: String {
         return """
             Added at: \(addedDate)
             \(album)
         """
     }
+    
 }

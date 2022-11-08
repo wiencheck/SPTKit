@@ -48,6 +48,7 @@ public extension SPT {
 }
 
 public extension SPT.Artists {
+    
     /**
      Get artist.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/)
@@ -60,7 +61,6 @@ public extension SPT.Artists {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getArtist(id: String, completion: @escaping (Result<SPTArtist, Error>) -> Void) {
-        
         SPT.call(method: Method.artist, pathParam: id, queryParams: nil, body: nil, completion: completion)
     }
     
@@ -76,7 +76,6 @@ public extension SPT.Artists {
      - completion: Handler called on success or failure.
      */
     static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTAlbum>, Error>) -> Void) {
-        
         if id.isEmpty {
             completion(.failure(SPTError.emptyParameter))
             return
@@ -166,7 +165,6 @@ public extension SPT.Artists {
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Artists {
     /**
      Get artist.
@@ -180,7 +178,11 @@ public extension SPT.Artists {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getArtist(id: String) async throws -> SPTArtist {
-        try await SPT.call(method: Method.artist, pathParam: id, queryParams: nil, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getArtist(id: id) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     /**
@@ -195,23 +197,11 @@ public extension SPT.Artists {
      - completion: Handler called on success or failure.
      */
     static func getArtistAlbums(id: String, groups: [AlbumGroup] = AlbumGroup.allCases, market: String? = SPT.countryCode, limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTAlbum> {
-        
-        if id.isEmpty {
-            throw SPTError.emptyParameter
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getArtistAlbums(id: id, groups: groups, market: market, limit: limit, offset: offset) { result in
+                continuation.resume(with: result)
+            }
         }
-        if groups.isEmpty {
-            throw SPTError.albumGroupsEmpty
-        }
-        var queryParams = [
-            "limit": String(limit),
-            "offset": String(offset),
-            "include_groups": groups.map {
-                $0.rawValue
-            }.joined(separator: ",")
-        ]
-        queryParams.updateValueIfExists(market, forKey: "country")
-        
-        return try await SPT.call(method: Method.artistAlbums, pathParam: id, queryParams: queryParams, body: nil)
     }
     
     /**
@@ -226,12 +216,11 @@ public extension SPT.Artists {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getArtistTopTracks(id: String, market: String? = SPT.countryCode) async throws -> [SPTTrack] {
-        
-        var queryParams: [String: String] = [:]
-        queryParams.updateValueIfExists(market, forKey: "country")
-        
-        let nested: Nested<SPTTrack> = try await SPT.call(method: Method.topTracks, pathParam: id, queryParams: queryParams, body: nil)
-        return nested.items
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getArtistTopTracks(id: id, market: market) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     /**
@@ -242,15 +231,11 @@ public extension SPT.Artists {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getSeveralArtists(ids: [String]) async throws -> [SPTArtist] {
-        
-        if ids.count > 50 {
-            print("*** Warning, maximum number of requested ids is 50, but \(ids.count) have been passed to the method. This could result in API error.")
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getSeveralArtists(ids: ids) { result in
+                continuation.resume(with: result)
+            }
         }
-        let queryParams = [
-            "ids": ids.joined(separator: ",")
-        ]
-        let nested: Nested<SPTArtist> = try await SPT.call(method: Method.severalArtists, pathParam: nil, queryParams: queryParams, body: nil)
-        return nested.items
     }
     
     /**
@@ -258,8 +243,11 @@ public extension SPT.Artists {
      [Read more](https://developer.spotify.com/documentation/web-api/reference/artists/get-related-artists/)
      */
     static func getArtistRelatedArtists(id: String) async throws -> [SPTArtist] {
-        
-        let nested: Nested<SPTArtist> = try await SPT.call(method: Method.relatedArtists, pathParam: id, queryParams: nil, body: nil)
-        return nested.items
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getArtistRelatedArtists(id: id) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
+    
 }

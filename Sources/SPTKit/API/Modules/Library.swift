@@ -20,6 +20,7 @@
 import Foundation
 
 public extension SPT {
+    
     /**
      Endpoints for retrieving information about, and managing, tracks that the current user has saved in their “Your Music” library.
      */
@@ -64,6 +65,7 @@ public extension SPT {
 }
 
 public extension SPT.Library {
+    
     /**
      Get a list of the albums saved in the current Spotify user’s ‘Your Music’ library.
      [Read more](https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-albums/)
@@ -74,7 +76,6 @@ public extension SPT.Library {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode, completion: @escaping (Result<SPTPagingObject<SPTSavedAlbum>, Error>) -> Void) {
-        
         var queryParams = [
             "limit": String(limit),
             "offset": String(offset),
@@ -115,7 +116,6 @@ public extension SPT.Library {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0, completion: @escaping (Result<SPTPagingObject<SPTPlaylist>, Error>) -> Void) {
-        
         let queryParams = [
             "limit": String(limit),
             "offset": String(offset),
@@ -130,7 +130,6 @@ public extension SPT.Library {
      - completion: Handler called after completing the request.
      */
     static func saveTracks(ids: [String], completion: ((Error?) -> Void)?) {
-        
         let queryParams = [
             "ids": ids.joined(separator: ",")
         ]
@@ -145,7 +144,6 @@ public extension SPT.Library {
      - completion: Handler called after completing the request.
      */
     static func saveAlbums(ids: [String], completion: ((Error?) -> Void)?) {
-        
         let queryParams = [
             "ids": ids.joined(separator: ",")
         ]
@@ -160,7 +158,6 @@ public extension SPT.Library {
      - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether album is saved.
      */
     static func checkSavedAlbums(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
-        
         let queryParams = [
             "ids": ids.joined(separator: ",")
         ]
@@ -183,7 +180,6 @@ public extension SPT.Library {
      - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether track is saved.
      */
     static func checkSavedTracks(ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
-        
         let queryParams = [
             "ids": ids.joined(separator: ",")
         ]
@@ -206,7 +202,6 @@ public extension SPT.Library {
      - completion: Handler called after completing the request.
      */
     static func removeSavedTracks(ids: [String], completion: ((Error?) -> Void)?) {
-        
         let queryParams = [
             "ids": ids.joined(separator: ",")
         ]
@@ -220,16 +215,15 @@ public extension SPT.Library {
      - completion: Handler called after completing the request.
      */
     static func removeSavedAlbums(ids: [String], completion: ((Error?) -> Void)?) {
-        
         let queryParams = [
             "ids": ids.joined(separator: ",")
         ]
         SPT.call(method: Method.removeAlbums, pathParam: nil, queryParams: queryParams, body: nil, completion: completion)
     }
+    
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Library {
     /**
      Get a list of the albums saved in the current Spotify user’s ‘Your Music’ library.
@@ -241,15 +235,11 @@ public extension SPT.Library {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getSavedAlbums(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTSavedAlbum> {
-        
-        var queryParams = [
-            "limit": String(limit),
-            "offset": String(offset),
-        ]
-        if let market = market {
-            queryParams["market"] = market
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getSavedAlbums(limit: limit, offset: offset, market: market) { result in
+                continuation.resume(with: result)
+            }
         }
-        return try await SPT.call(method: Method.savedAlbums, pathParam: nil, queryParams: queryParams, body: nil)
     }
     
     /**
@@ -262,15 +252,11 @@ public extension SPT.Library {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getSavedTracks(limit: Int = SPT.limit, offset: Int = 0, market: String? = SPT.countryCode) async throws -> SPTPagingObject<SPTSavedTrack> {
-        
-        var queryParams = [
-            "limit": String(limit),
-            "offset": String(offset),
-        ]
-        if let market = market {
-            queryParams["market"] = market
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getSavedTracks(limit: limit, offset: offset, market: market) { result in
+                continuation.resume(with: result)
+            }
         }
-        return try await SPT.call(method: Method.savedTracks, pathParam: nil, queryParams: queryParams, body: nil)
     }
     
     /**
@@ -282,12 +268,11 @@ public extension SPT.Library {
      - completion: Handler containing decoded objects, called after completing the request.
      */
     static func getFollowedPlaylists(limit: Int = SPT.limit, offset: Int = 0) async throws -> SPTPagingObject<SPTPlaylist> {
-        
-        let queryParams = [
-            "limit": String(limit),
-            "offset": String(offset),
-        ]
-        return try await SPT.call(method: Method.savedPlaylists, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getFollowedPlaylists(limit: limit, offset: offset) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     /**
@@ -297,11 +282,14 @@ public extension SPT.Library {
      - completion: Handler called after completing the request.
      */
     static func saveTracks(ids: [String]) async throws {
-        
-        let queryParams = [
-            "ids": ids.joined(separator: ",")
-        ]
-        try await SPT.call(method: Method.saveTracks, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.saveTracks(ids: ids) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
+            }
+        }
     }
     
     /**
@@ -312,11 +300,14 @@ public extension SPT.Library {
      - completion: Handler called after completing the request.
      */
     static func saveAlbums(ids: [String]) async throws {
-        
-        let queryParams = [
-            "ids": ids.joined(separator: ",")
-        ]
-        try await SPT.call(method: Method.saveAlbums, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.saveAlbums(ids: ids) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
+            }
+        }
     }
     
     /**
@@ -327,12 +318,11 @@ public extension SPT.Library {
      - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether album is saved.
      */
     static func checkSavedAlbums(ids: [String]) async throws -> [String: Bool] {
-        
-        let queryParams = [
-            "ids": ids.joined(separator: ",")
-        ]
-        let values: [Bool] = try await SPT.call(method: Method.checkSavedAlbums, pathParam: nil, queryParams: queryParams, body: nil)
-        return Dictionary(uniqueKeysWithValues: zip(ids, values))
+        return try await withCheckedThrowingContinuation { continuation in
+            self.checkSavedAlbums(ids: ids) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     /**
@@ -343,12 +333,11 @@ public extension SPT.Library {
      - completion: Handler called after completing the request. Returns dictionary object keyed by Spotify ID with boolean value indicating whether track is saved.
      */
     static func checkSavedTracks(ids: [String]) async throws -> [String: Bool] {
-        
-        let queryParams = [
-            "ids": ids.joined(separator: ",")
-        ]
-        let values: [Bool] = try await SPT.call(method: Method.checkSavedTracks, pathParam: nil, queryParams: queryParams, body: nil)
-        return Dictionary(uniqueKeysWithValues: zip(ids, values))
+        return try await withCheckedThrowingContinuation { continuation in
+            self.checkSavedTracks(ids: ids) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     /**
@@ -359,11 +348,14 @@ public extension SPT.Library {
      - completion: Handler called after completing the request.
      */
     static func removeSavedTracks(ids: [String]) async throws {
-        
-        let queryParams = [
-            "ids": ids.joined(separator: ",")
-        ]
-        try await SPT.call(method: Method.removeTracks, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.removeSavedTracks(ids: ids) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
+            }
+        }
     }
     
     /**
@@ -373,10 +365,14 @@ public extension SPT.Library {
      - completion: Handler called after completing the request.
      */
     static func removeSavedAlbums(ids: [String]) async throws {
-        
-        let queryParams = [
-            "ids": ids.joined(separator: ",")
-        ]
-        try await SPT.call(method: Method.removeAlbums, pathParam: nil, queryParams: queryParams, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.removeSavedAlbums(ids: ids) { error in
+                if let error {
+                    return continuation.resume(throwing: error)
+                }
+                continuation.resume()
+            }
+        }
     }
+    
 }

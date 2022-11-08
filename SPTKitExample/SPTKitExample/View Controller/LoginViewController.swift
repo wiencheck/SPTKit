@@ -13,7 +13,7 @@ class LoginViewController: UIViewController {
     
     @IBOutlet private weak var messageLabel: UILabel!
     
-    private let manager = SpotifyManager(clientID: "your-client-id", redirectURL: URL(string: "sptkit://callback")!)
+    private let manager = SpotifyManager(clientID: "a4ee54f5bb5d40b28c3d9a72cff6df23", redirectURL: URL(string: "sptkit://")!)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +25,7 @@ class LoginViewController: UIViewController {
                     SPT.authorizationToken = token
                     self.showTabBar()
                 case .failure(let error):
+                    print(error)
                     self.messageLabel.text = error.localizedDescription
                 }
             }

@@ -39,13 +39,13 @@ public extension SPT {
 }
 
 public extension SPT.Users {
+    
     /**
      Add the current user as a follower of a playlist.
      - Parameters:
         - completion: Handler called after completing the request.
      */
     static func getCurrentUser(completion: @escaping (Result<SPTPrivateUser, Error>) -> Void) {
-        
         SPT.call(method: Method.getCurrentUser, pathParam: nil, queryParams: nil, body: nil, completion: completion)
     }
     
@@ -56,22 +56,25 @@ public extension SPT.Users {
         - completion: Handler called after completing the request.
      */
     static func getUser(identifier: String, completion: @escaping (Result<SPTPublicUser, Error>) -> Void) {
-        
         SPT.call(method: Method.getUser, pathParam: identifier, queryParams: nil, body: nil, completion: completion)
     }
+    
 }
 
 // - MARK: Async/Await support.
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public extension SPT.Users {
+    
     /**
      Add the current user as a follower of a playlist.
      - Parameters:
         - completion: Handler called after completing the request.
      */
     static func getCurrentUser() async throws -> SPTPrivateUser {
-        
-        try await SPT.call(method: Method.getCurrentUser, pathParam: nil, queryParams: nil, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getCurrentUser { result in
+                continuation.resume(with: result)
+            }
+        }
     }
     
     /**
@@ -81,7 +84,11 @@ public extension SPT.Users {
         - completion: Handler called after completing the request.
      */
     static func getUser(identifier: String) async throws -> SPTPublicUser {
-        
-        try await SPT.call(method: Method.getUser, pathParam: identifier, queryParams: nil, body: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            self.getUser(identifier: identifier) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
+    
 }

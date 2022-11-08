@@ -19,7 +19,7 @@
 import Foundation
 
 /// Full Artist object.
-public class SPTArtist: SPTBaseObject {
+public final class SPTArtist: SPTBaseObject {
     
     /**
      The name of this artist.
@@ -39,20 +39,14 @@ public class SPTArtist: SPTBaseObject {
     /**
      Images of the artist in various sizes, widest first.
      */
-    public let images: [SPTImage]
+    public let images: [SPTImage]?
     
     /**
      The popularity of the artist. The value will be between 0 and 100, with 100 being the most popular. The artist’s popularity is calculated from the popularity of all the artist’s tracks.
      */
     public let popularity: Int?
     
-    public override var description: String {
-        return """
-           Artist: \"\(name)\", uri: \(uri)
-        """
-    }
-    
-    // MARK: Codable stuff
+    // MARK: Codable
     public enum CodingKeys: String, CodingKey {
         case name, followers, genres, images, popularity
     }
@@ -62,8 +56,8 @@ public class SPTArtist: SPTBaseObject {
         
         name = try container.decode(String.self, forKey: .name)
         followers = try container.decodeIfPresent(SPTFollowers.self, forKey: .followers)
-        genres = try container.decode([String].self, forKey: .genres)
-        images = try container.decode([SPTImage].self, forKey: .images)
+        genres = try container.decodeIfPresent([String].self, forKey: .genres) ?? []
+        images = try container.decodeIfPresent([SPTImage].self, forKey: .images)
         popularity = try container.decodeIfPresent(Int.self, forKey: .popularity)
         
         try super.init(from: decoder)
@@ -75,7 +69,7 @@ public class SPTArtist: SPTBaseObject {
         try container.encode(name, forKey: .name)
         try container.encodeIfPresent(followers, forKey: .followers)
         try container.encode(genres, forKey: .genres)
-        try container.encode(images, forKey: .images)
+        try container.encodeIfPresent(images, forKey: .images)
         try container.encodeIfPresent(popularity, forKey: .popularity)
         
         try super.encode(to: encoder)
@@ -83,8 +77,7 @@ public class SPTArtist: SPTBaseObject {
 }
 
 extension SPTArtist: Nestable {
-    static var pluralKey: String {
-        return "artists"
-    }
+    
+    static var pluralKey: String { "artists" }
+    
 }
-

@@ -18,6 +18,7 @@
 
 import Foundation
 public struct SPTPagingObject<T: Codable>: Codable {
+    
     /**
      The requested data.
      */
@@ -47,7 +48,7 @@ public struct SPTPagingObject<T: Codable>: Codable {
         return previous != nil
     }
     
-    // MARK: Codable stuff
+    // MARK: Codable
     private enum CodingKeys: String, CodingKey {
         case items, limit, next, offset, previous, total
     }
@@ -57,7 +58,12 @@ public struct SPTPagingObject<T: Codable>: Codable {
         
         let throwables = try container.decode([Throwable<T>].self, forKey: .items)
         items = throwables.compactMap {
-            try? $0.result.get()
+            do {
+                return try $0.result.get()
+            } catch {
+                assertionFailure("Could not decode \(Self.self), error: \(error)")
+            }
+            return nil
         }
         limit = try container.decode(Int.self, forKey: .limit)
         next = try container.decodeIfPresent(URL.self, forKey: .next)
