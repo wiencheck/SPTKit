@@ -17,6 +17,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import Foundation
+
 public extension SPT {
     /**
      Endpoints for retrieving information about a user’s profile.
@@ -62,6 +64,10 @@ public extension SPT.Users {
 }
 
 // - MARK: Async/Await support.
+@available(iOS 13.0, *)
+@available(macOS 10.15, *)
+@available(tvOS 13.0, *)
+@available(watchOS 6.0, *)
 public extension SPT.Users {
     
     /**

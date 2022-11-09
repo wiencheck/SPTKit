@@ -224,6 +224,10 @@ public extension SPT.Library {
 }
 
 // - MARK: Async/Await support.
+@available(iOS 13.0, *)
+@available(macOS 10.15, *)
+@available(tvOS 13.0, *)
+@available(watchOS 6.0, *)
 public extension SPT.Library {
     /**
      Get a list of the albums saved in the current Spotify user’s ‘Your Music’ library.
